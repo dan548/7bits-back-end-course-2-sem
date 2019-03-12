@@ -1,0 +1,18 @@
+<web-app>
+    <servlet>
+        <servlet-name>taskServlet</servlet-name>
+        <servlet-class>it.sevenbits.servlets.TaskServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>tasksServlet</servlet-name>
+        <servlet-class>it.sevenbits.servlets.TasksServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>taskServlet</servlet-name>
+        <url-pattern>/task</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>tasksServlet</servlet-name>
+        <url-pattern>/tasks</url-pattern>
+    </servlet-mapping>
+</web-app>
