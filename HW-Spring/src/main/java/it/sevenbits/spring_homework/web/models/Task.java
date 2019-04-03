@@ -1,4 +1,4 @@
-package it.sevenbits.spring_homework.task.models;
+package it.sevenbits.spring_homework.web.models;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Task {
 
     private final String id;
-    private final String text;
+    private String text;
     private String status;
 
     @JsonCreator
@@ -30,5 +30,9 @@ public class Task {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 }

@@ -1,9 +1,9 @@
-package it.sevenbits.spring_homework.task;
+package it.sevenbits.spring_homework.web;
 
-import it.sevenbits.spring_homework.task.models.Task;
-import it.sevenbits.spring_homework.task.models.requests.AddTaskRequest;
-import it.sevenbits.spring_homework.task.models.requests.StatusChangeRequest;
-import it.sevenbits.spring_homework.task.repository.TaskRepository;
+import it.sevenbits.spring_homework.web.models.Task;
+import it.sevenbits.spring_homework.web.models.requests.AddTaskRequest;
+import it.sevenbits.spring_homework.web.models.requests.UpdateTaskRequest;
+import it.sevenbits.spring_homework.core.repository.TaskRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -51,7 +51,7 @@ public class TaskListController {
     @RequestMapping(method=POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Task> create(@RequestBody AddTaskRequest newTask) {
-        if (newTask.getText() == null) {
+        if (newTask.getText() == null || newTask.getText().equals("")) {
             return ResponseEntity.badRequest().body(null);
         }
         Task createdTask = repository.create(newTask);
@@ -59,7 +59,7 @@ public class TaskListController {
                 .path(createdTask.getId())
                 .build()
                 .toUri();
-        return ResponseEntity.created(location).body(createdTask);
+        return ResponseEntity.created(location).build();
     }
 
     @RequestMapping(value="/{id}", method=DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -75,15 +75,22 @@ public class TaskListController {
 
     @RequestMapping(value="/{id}", method=PATCH, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Task> updateTask(@PathVariable("id") String id, @RequestBody StatusChangeRequest status) {
+    public ResponseEntity<Task> updateTask(@PathVariable("id") String id, @RequestBody UpdateTaskRequest request) {
         Task task = repository.findTaskById(id);
         if (task == null) {
             return ResponseEntity.notFound().build();
         }
-        if (!status.getStatus().equals("done") && !status.getStatus().equals("inbox")) {
+        if (!request.getStatus().equals("done") && !request.getStatus().equals("inbox")) {
+            if (request.getText() != null && !request.getText().equals("")) {
+                task.setText(request.getText());
+                return ResponseEntity.noContent().build();
+            }
             return ResponseEntity.badRequest().build();
         }
-        task.setStatus(status.getStatus());
+        task.setStatus(request.getStatus());
+        if (request.getText() != null && !request.getText().equals("")) {
+            task.setText(request.getText());
+        }
         return ResponseEntity.noContent().build();
     }
 }

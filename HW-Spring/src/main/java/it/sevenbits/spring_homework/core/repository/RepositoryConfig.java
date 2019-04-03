@@ -1,4 +1,4 @@
-package it.sevenbits.spring_homework.task.repository;
+package it.sevenbits.spring_homework.core.repository;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

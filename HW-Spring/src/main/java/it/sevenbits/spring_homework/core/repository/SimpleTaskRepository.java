@@ -1,7 +1,7 @@
-package it.sevenbits.spring_homework.task.repository;
+package it.sevenbits.spring_homework.core.repository;
 
-import it.sevenbits.spring_homework.task.models.Task;
-import it.sevenbits.spring_homework.task.models.requests.AddTaskRequest;
+import it.sevenbits.spring_homework.web.models.Task;
+import it.sevenbits.spring_homework.web.models.requests.AddTaskRequest;
 
 import java.util.List;
 import java.util.Map;
