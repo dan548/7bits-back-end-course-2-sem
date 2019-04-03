@@ -1,6 +1,11 @@
-package it.sevenbits.spring_homework;
+package it.sevenbits.spring_homework.task;
 
+import it.sevenbits.spring_homework.task.models.Task;
+import it.sevenbits.spring_homework.task.models.requests.AddTaskRequest;
+import it.sevenbits.spring_homework.task.models.requests.StatusChangeRequest;
+import it.sevenbits.spring_homework.task.repository.TaskRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -22,27 +27,28 @@ public class TaskListController {
         this.repository = repository;
     }
 
-    @RequestMapping(method=GET, produces = "application/json")
+    @RequestMapping(method=GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public List<Task> getAllTasks(@RequestParam("status") String status) {
-        return repository.getAllTasks()
+    public List<Task> getAllTasks(@RequestParam(name = "status", defaultValue = "inbox") String status) {
+
+        return repository.getTasks().values()
                 .stream()
-                .filter(x -> x.getStatus().equals(status))
+                .filter(task -> task.getStatus().equals(status))
                 .collect(Collectors.toList());
     }
 
-    @RequestMapping(value="/{id}", method=GET, produces = "application/json")
+    @RequestMapping(value="/{id}", method=GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Task> getTaskById(@PathVariable("id") String id) {
-        Task task = findTaskById(id);
+        Task task = repository.findTaskById(id);
         if (task == null) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(task);
     }
 
-    @RequestMapping(method=POST, produces = "application/json", consumes = "application/json")
+    @RequestMapping(method=POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Task> create(@RequestBody AddTaskRequest newTask) {
         if (newTask.getText() == null) {
@@ -56,21 +62,21 @@ public class TaskListController {
         return ResponseEntity.created(location).body(createdTask);
     }
 
-    @RequestMapping(value="/{id}", method=DELETE, produces = "application/json")
+    @RequestMapping(value="/{id}", method=DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Task> deleteTask(@PathVariable("id") String id) {
-        Task task = findTaskById(id);
+        Task task = repository.findTaskById(id);
         if (task == null) {
             return ResponseEntity.notFound().build();
         }
-        repository.getAllTasks().remove(task);
+        repository.removeTaskById(id);
         return ResponseEntity.ok().build();
     }
 
-    @RequestMapping(value="/{id}", method=PATCH, produces = "application/json", consumes = "application/json")
+    @RequestMapping(value="/{id}", method=PATCH, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Task> updateTask(@PathVariable("id") String id, @RequestBody StatusChangeRequest status) {
-        Task task = findTaskById(id);
+        Task task = repository.findTaskById(id);
         if (task == null) {
             return ResponseEntity.notFound().build();
         }
@@ -79,13 +85,5 @@ public class TaskListController {
         }
         task.setStatus(status.getStatus());
         return ResponseEntity.noContent().build();
-    }
-
-    private Task findTaskById(String id) {
-        return repository.getAllTasks()
-                .stream()
-                .filter(x -> x.getId().equals(id))
-                .findAny()
-                .orElse(null);
     }
 }

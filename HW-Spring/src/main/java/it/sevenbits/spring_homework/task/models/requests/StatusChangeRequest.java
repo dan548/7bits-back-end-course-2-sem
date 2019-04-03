@@ -1,4 +1,4 @@
-package it.sevenbits.spring_homework;
+package it.sevenbits.spring_homework.task.models.requests;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
