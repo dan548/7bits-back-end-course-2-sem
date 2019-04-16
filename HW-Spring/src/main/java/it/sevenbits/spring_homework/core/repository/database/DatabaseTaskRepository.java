@@ -17,6 +17,10 @@ public class DatabaseTaskRepository implements TaskRepository {
 
     private final JdbcOperations jdbcOperations;
 
+    /**
+     * Constructs a new repository.
+     * @param jdbcOperations current jdbc settings
+     */
     public DatabaseTaskRepository(final JdbcOperations jdbcOperations) {
         this.jdbcOperations = jdbcOperations;
     }

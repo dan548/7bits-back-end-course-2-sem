@@ -21,6 +21,7 @@ public interface TaskRepository {
      *
      * @param id - id of the task to find
      * @return task with the specified id
+     * @throws DatabaseException always
      */
     Task findTaskById(String id) throws DatabaseException;
 
@@ -36,6 +37,7 @@ public interface TaskRepository {
      * Removes a task with the id specified.
      *
      * @param id - id of the task to delete.
+     * @throws DatabaseException always
      */
     void removeTaskById(String id) throws DatabaseException;
 

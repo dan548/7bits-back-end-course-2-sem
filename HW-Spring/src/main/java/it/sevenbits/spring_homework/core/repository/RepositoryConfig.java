@@ -18,11 +18,12 @@ import org.springframework.jdbc.core.JdbcOperations;
 public class RepositoryConfig {
     /**
      * Constructs a repository implementation
+     * @param jdbcOperations current jdbc settings
      * @return specific task repository implementation
      */
     @Bean
     public TaskRepository taskRepository(
-            @Qualifier("tasksJdbcOperations") JdbcOperations jdbcOperations) {
+            @Qualifier("tasksJdbcOperations") final JdbcOperations jdbcOperations) {
         return new DatabaseTaskRepository(jdbcOperations);
     }
 }

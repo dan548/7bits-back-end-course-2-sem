@@ -41,6 +41,13 @@ public class Task {
         createdAt = getDate();
     }
 
+    /**
+     * Reconstructs a task from the database.
+     * @param id id field of the task
+     * @param text text field of the task
+     * @param status status field of the task
+     * @param createdAt date when the task was created
+     */
     public Task(final String id, final String text, final String status, final String createdAt) {
         this.id = id;
         this.text = text;
