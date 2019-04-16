@@ -1,0 +1,9 @@
+server:
+  port: 8080
+spring:
+  datasource:
+    tasks:
+      jdbcUrl: jdbc:postgresql://localhost:5432/eisetasks
+      username: daniil
+      password: 251853Hero
+      driver-class-name: org.postgresql.Driver

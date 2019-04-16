@@ -3,6 +3,10 @@ package it.sevenbits.spring_homework.core.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+
 /**
  * Task model.
  * @since 1.0
@@ -14,6 +18,14 @@ public class Task {
     private final String id;
     private String text;
     private String status;
+    private String createdAt;
+
+    private static final DateTimeFormatter DATE_FORMATTER =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssxxx");
+
+    private static String getDate() {
+        return ZonedDateTime.now(ZoneOffset.UTC).format(DATE_FORMATTER);
+    }
 
     /**
      * Constructs a task.
@@ -26,6 +38,14 @@ public class Task {
         this.id = id;
         this.text = text;
         status = "inbox";
+        createdAt = getDate();
+    }
+
+    public Task(final String id, final String text, final String status, final String createdAt) {
+        this.id = id;
+        this.text = text;
+        this.status = status;
+        this.createdAt = createdAt;
     }
 
     public String getId() {
@@ -46,5 +66,9 @@ public class Task {
 
     public void setText(final String text) {
         this.text = text;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
     }
 }

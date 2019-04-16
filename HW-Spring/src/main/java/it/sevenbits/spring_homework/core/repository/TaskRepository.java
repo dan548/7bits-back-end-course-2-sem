@@ -1,6 +1,7 @@
 package it.sevenbits.spring_homework.core.repository;
 
 import it.sevenbits.spring_homework.core.model.Task;
+import it.sevenbits.spring_homework.core.repository.database.DatabaseException;
 import it.sevenbits.spring_homework.web.model.requests.AddTaskRequest;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public interface TaskRepository {
      * @param id - id of the task to find
      * @return task with the specified id
      */
-    Task findTaskById(String id);
+    Task findTaskById(String id) throws DatabaseException;
 
     /**
      * Creates a task with the title specified.
@@ -36,7 +37,7 @@ public interface TaskRepository {
      *
      * @param id - id of the task to delete.
      */
-    void removeTaskById(String id);
+    void removeTaskById(String id) throws DatabaseException;
 
     /**
      * Gets all tasks list.

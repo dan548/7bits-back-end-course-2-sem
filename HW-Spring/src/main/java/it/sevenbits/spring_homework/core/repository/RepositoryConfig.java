@@ -1,9 +1,11 @@
 package it.sevenbits.spring_homework.core.repository;
 
+import it.sevenbits.spring_homework.core.repository.database.DatabaseTaskRepository;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcOperations;
 
-import java.util.HashMap;
 
 /**
  * Configuration class of the repository.
@@ -19,7 +21,8 @@ public class RepositoryConfig {
      * @return specific task repository implementation
      */
     @Bean
-    public TaskRepository taskRepository() {
-        return new SimpleTaskRepository(new HashMap<>());
+    public TaskRepository taskRepository(
+            @Qualifier("tasksJdbcOperations") JdbcOperations jdbcOperations) {
+        return new DatabaseTaskRepository(jdbcOperations);
     }
 }

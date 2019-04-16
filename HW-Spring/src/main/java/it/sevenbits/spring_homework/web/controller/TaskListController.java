@@ -1,6 +1,7 @@
 package it.sevenbits.spring_homework.web.controller;
 
 import it.sevenbits.spring_homework.core.model.Task;
+import it.sevenbits.spring_homework.core.repository.database.DatabaseException;
 import it.sevenbits.spring_homework.web.model.requests.AddTaskRequest;
 import it.sevenbits.spring_homework.web.model.requests.UpdateTaskRequest;
 import it.sevenbits.spring_homework.core.repository.TaskRepository;
@@ -61,7 +62,12 @@ public class TaskListController {
     @RequestMapping(value = "/{id}", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Task> getTaskById(final @PathVariable("id") String id) {
-        Task task = repository.findTaskById(id);
+        Task task = null;
+        try {
+            task = repository.findTaskById(id);
+        } catch (DatabaseException e) {
+            e.printStackTrace();
+        }
         if (task == null) {
             return ResponseEntity.notFound().build();
         }
@@ -98,11 +104,20 @@ public class TaskListController {
     @RequestMapping(value = "/{id}", method = DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Task> deleteTask(final @PathVariable("id") String id) {
-        Task task = repository.findTaskById(id);
+        Task task = null;
+        try {
+            task = repository.findTaskById(id);
+        } catch (DatabaseException e) {
+            e.printStackTrace();
+        }
         if (task == null) {
             return ResponseEntity.notFound().build();
         }
-        repository.removeTaskById(id);
+        try {
+            repository.removeTaskById(id);
+        } catch (DatabaseException e) {
+            e.printStackTrace();
+        }
         return ResponseEntity.ok().build();
     }
 
@@ -117,7 +132,12 @@ public class TaskListController {
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Task> updateTask(final @PathVariable("id") String id, final @RequestBody UpdateTaskRequest request) {
-        Task task = repository.findTaskById(id);
+        Task task = null;
+        try {
+            task = repository.findTaskById(id);
+        } catch (DatabaseException e) {
+            e.printStackTrace();
+        }
         if (task == null) {
             return ResponseEntity.notFound().build();
         }
