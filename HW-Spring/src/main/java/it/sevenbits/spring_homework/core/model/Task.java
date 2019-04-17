@@ -19,6 +19,7 @@ public class Task {
     private String text;
     private String status;
     private String createdAt;
+    private String updatedAt;
 
     private static final DateTimeFormatter DATE_FORMATTER =
             DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssxxx");
@@ -39,6 +40,7 @@ public class Task {
         this.text = text;
         status = "inbox";
         createdAt = getDate();
+        updatedAt = createdAt;
     }
 
     /**
@@ -53,6 +55,22 @@ public class Task {
         this.text = text;
         this.status = status;
         this.createdAt = createdAt;
+    }
+
+    /**
+     * Reconstructs a task from the database.
+     * @param id id field of the task
+     * @param text text field of the task
+     * @param status status field of the task
+     * @param createdAt date when the task was created
+     * @param updatedAt date when the task was last updated
+     */
+    public Task(final String id, final String text, final String status, final String createdAt, final String updatedAt) {
+        this.id = id;
+        this.text = text;
+        this.status = status;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public String getId() {
@@ -77,5 +95,13 @@ public class Task {
 
     public String getCreatedAt() {
         return createdAt;
+    }
+
+    public String getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(final String updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

@@ -26,33 +26,54 @@ public class DatabaseTaskRepository implements TaskRepository {
     }
 
     @Override
-    public Task findTaskById(final String id) throws DatabaseException {
-        throw new DatabaseException("The method is not implemented yet.");
-    }
-
-    @Override
-    public Task create(final AddTaskRequest request) {
-        Task newTask = new Task(UUID.randomUUID().toString(), request.getText());
-        jdbcOperations.update("INSERT INTO task (id, text, status, createdAt) VALUES (?, ?, ?, ?)",
-                newTask.getId(), newTask.getText(), newTask.getStatus(), newTask.getCreatedAt());
-        return newTask;
-    }
-
-    @Override
-    public void removeTaskById(final String id) throws DatabaseException {
-        throw new DatabaseException("The method is not implemented yet.");
-    }
-
-    @Override
-    public List<Task> getAllTasks() {
-        return jdbcOperations.query(
-                "SELECT * FROM task",
+    public Task findTaskById(final String givenId) throws DatabaseException {
+        if (!givenId.matches(
+                "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+        )) {
+            throw new DatabaseException("Bad id");
+        }
+        List<Task> list = jdbcOperations.query(
+                "SELECT id, text, status, createdAt FROM task WHERE id = ?",
                 (resultSet, i) -> {
                     String id = resultSet.getString(1);
                     String text = resultSet.getString(2);
                     String status = resultSet.getString(3);
                     String createdAt = resultSet.getString(4);
                     return new Task(id, text, status, createdAt);
+                }, givenId);
+        if (list.size() >= 1) {
+            return list.get(0);
+        } else {
+            throw new DatabaseException("Element with such id is not found.");
+        }
+    }
+
+    @Override
+    public Task create(final AddTaskRequest request) {
+        Task newTask = new Task(UUID.randomUUID().toString(), request.getText());
+        jdbcOperations.update("INSERT INTO task (id, text, status, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?)",
+                newTask.getId(), newTask.getText(), newTask.getStatus(), newTask.getCreatedAt(), newTask.getUpdatedAt());
+        return newTask;
+    }
+
+    @Override
+    public void removeTaskById(final String id) throws DatabaseException {
+        if (jdbcOperations.update("DELETE FROM task WHERE id=?", id) != 1) {
+            throw new DatabaseException("deleting went wrong");
+        }
+    }
+
+    @Override
+    public List<Task> getAllTasks() {
+        return jdbcOperations.query(
+                "SELECT id, text, status, createdat, updatedat FROM task",
+                (resultSet, i) -> {
+                    String id = resultSet.getString(1);
+                    String text = resultSet.getString(2);
+                    String status = resultSet.getString(3);
+                    String createdAt = resultSet.getString(4);
+                    String updatedAt = resultSet.getString(5);
+                    return new Task(id, text, status, createdAt, updatedAt);
                 });
     }
 
