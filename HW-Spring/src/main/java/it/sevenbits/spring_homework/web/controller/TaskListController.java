@@ -132,39 +132,18 @@ public class TaskListController {
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Task> updateTask(final @PathVariable("id") String id, final @RequestBody UpdateTaskRequest request) {
-        Task task = null;
         try {
-            task = repository.findTaskById(id);
+            repository.editTaskById(request, id);
+            return ResponseEntity.noContent().build();
         } catch (DatabaseException e) {
-            e.printStackTrace();
-        }
-        if (task == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        if (request.getStatus() != null) {
-            if (((request.getStatus().equals("done")) || (request.getStatus().equals("inbox")))) {
-                task.setStatus(request.getStatus());
-            } else {
-                return ResponseEntity.badRequest().build();
-            }
-        } else {
-            if (request.getText() == null || request.getText().equals("")) {
-                return ResponseEntity.badRequest().build();
-            } else {
-                task.setText(request.getText());
-                return ResponseEntity.noContent().build();
+            switch (e.getMessage()) {
+                case "Bad id":
+                    return ResponseEntity.notFound().build();
+                case "Bad status":
+                case "Bad request":
+                    return ResponseEntity.badRequest().build();
             }
         }
-
-        if (request.getText() != null) {
-            if (!request.getText().equals("")) {
-                task.setText(request.getText());
-            } else {
-                return ResponseEntity.badRequest().build();
-            }
-        }
-
         return ResponseEntity.noContent().build();
     }
 }

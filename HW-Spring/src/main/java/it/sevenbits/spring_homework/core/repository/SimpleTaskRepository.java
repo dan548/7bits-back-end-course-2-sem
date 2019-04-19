@@ -1,7 +1,9 @@
 package it.sevenbits.spring_homework.core.repository;
 
 import it.sevenbits.spring_homework.core.model.Task;
+import it.sevenbits.spring_homework.core.repository.database.DatabaseException;
 import it.sevenbits.spring_homework.web.model.requests.AddTaskRequest;
+import it.sevenbits.spring_homework.web.model.requests.UpdateTaskRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +49,11 @@ public class SimpleTaskRepository implements TaskRepository {
         Task task = new Task(id, request.getText());
         tasks.put(id, task);
         return task;
+    }
+
+    @Override
+    public Task editTaskById(UpdateTaskRequest request, String id) throws DatabaseException {
+        return null;
     }
 
     @Override

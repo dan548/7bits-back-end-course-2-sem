@@ -3,6 +3,7 @@ package it.sevenbits.spring_homework.core.repository;
 import it.sevenbits.spring_homework.core.model.Task;
 import it.sevenbits.spring_homework.core.repository.database.DatabaseException;
 import it.sevenbits.spring_homework.web.model.requests.AddTaskRequest;
+import it.sevenbits.spring_homework.web.model.requests.UpdateTaskRequest;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -32,6 +33,15 @@ public interface TaskRepository {
      * @return the task created
      */
     Task create(AddTaskRequest request);
+
+    /**
+     * Updates a task with the id specified.
+     *
+     * @param request - task updating request object
+     * @param id id of the task to update
+     * @return the task created
+     */
+    Task editTaskById(UpdateTaskRequest request, String id) throws DatabaseException;
 
     /**
      * Removes a task with the id specified.
