@@ -142,8 +142,9 @@ public class TaskListController {
                 case "Bad status":
                 case "Bad request":
                     return ResponseEntity.badRequest().build();
+                    default:
+                        return ResponseEntity.noContent().build();
             }
         }
-        return ResponseEntity.noContent().build();
     }
 }

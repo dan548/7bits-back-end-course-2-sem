@@ -52,8 +52,19 @@ public class SimpleTaskRepository implements TaskRepository {
     }
 
     @Override
-    public Task editTaskById(UpdateTaskRequest request, String id) throws DatabaseException {
-        return null;
+    public Task editTaskById(final UpdateTaskRequest request, final String id) throws DatabaseException {
+        Task task = findTaskById(id);
+        if (task != null) {
+            if (request.getStatus() != null) {
+                task.setStatus(request.getStatus());
+            }
+            if (request.getText() != null) {
+                task.setText(request.getText());
+            }
+        } else {
+            throw new DatabaseException("Bad id");
+        }
+        return task;
     }
 
     @Override
