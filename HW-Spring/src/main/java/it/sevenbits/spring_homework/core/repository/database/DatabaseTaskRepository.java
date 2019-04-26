@@ -45,7 +45,7 @@ public class DatabaseTaskRepository implements TaskRepository {
     @Override
     public TaskResponse findTaskById(final String givenId) {
         List<Task> list = jdbcOperations.query(
-                "SELECT id, text, status, createdAt FROM task WHERE id = ?",
+                "SELECT id, text, status, createdAt, updatedAt FROM task WHERE id = ?",
                 DatabaseTaskRepository::mapRow, givenId);
         if (list.size() >= 1) {
             return new TaskResponse(list.get(0));

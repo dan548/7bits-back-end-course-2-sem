@@ -18,4 +18,7 @@ public class DateGetter {
                 .format(DateTimeFormatter.ofPattern(datePattern));
     }
 
+    public void setDatePattern(final String datePattern) {
+        this.datePattern = datePattern;
+    }
 }
