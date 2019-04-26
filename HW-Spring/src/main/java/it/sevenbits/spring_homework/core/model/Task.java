@@ -1,9 +1,5 @@
 package it.sevenbits.spring_homework.core.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import it.sevenbits.spring_homework.core.dategetter.DateGetter;
-
 /**
  * Task model.
  * @since 1.0
@@ -18,39 +14,8 @@ public class Task {
     private String createdAt;
     private String updatedAt;
 
-
-
     /**
      * Constructs a task.
-     *
-     * @param id id field of the task
-     * @param text text field of the task
-     */
-    @JsonCreator
-    public Task(final @JsonProperty("id") String id, final @JsonProperty("text") String text) {
-        this.id = id;
-        this.text = text;
-        status = "inbox";
-        createdAt = DateGetter.getDate();
-        updatedAt = createdAt;
-    }
-
-    /**
-     * Reconstructs a task from the database.
-     * @param id id field of the task
-     * @param text text field of the task
-     * @param status status field of the task
-     * @param createdAt date when the task was created
-     */
-    public Task(final String id, final String text, final String status, final String createdAt) {
-        this.id = id;
-        this.text = text;
-        this.status = status;
-        this.createdAt = createdAt;
-    }
-
-    /**
-     * Reconstructs a task from the database.
      * @param id id field of the task
      * @param text text field of the task
      * @param status status field of the task

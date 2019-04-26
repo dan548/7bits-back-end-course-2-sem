@@ -1,7 +1,8 @@
 package it.sevenbits.spring_homework.web.controller;
 
+import it.sevenbits.spring_homework.config.constant.StatusType;
 import it.sevenbits.spring_homework.core.model.Task;
-import it.sevenbits.spring_homework.core.repository.database.DatabaseException;
+import it.sevenbits.spring_homework.core.model.response.TaskResponse;
 import it.sevenbits.spring_homework.web.model.requests.AddTaskRequest;
 import it.sevenbits.spring_homework.web.model.requests.UpdateTaskRequest;
 import it.sevenbits.spring_homework.core.repository.TaskRepository;
@@ -50,7 +51,7 @@ public class TaskListController {
     @ResponseBody
     public List<Task> getAllTasks(final @RequestParam(name = "status", defaultValue = "inbox") String status) {
 
-        return repository.getTasksFiltered(task -> task.getStatus().equals(status));
+        return repository.getTasksWithStatus(status);
     }
 
     /**
@@ -62,16 +63,16 @@ public class TaskListController {
     @RequestMapping(value = "/{id}", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Task> getTaskById(final @PathVariable("id") String id) {
-        Task task = null;
-        try {
-            task = repository.findTaskById(id);
-        } catch (DatabaseException e) {
-            e.printStackTrace();
+        if (id.matches(
+                "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+        )) {
+            TaskResponse task = repository.findTaskById(id);
+            if (task == null) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(task.getTask());
         }
-        if (task == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(task);
+        return ResponseEntity.notFound().build();
     }
 
 
@@ -87,9 +88,9 @@ public class TaskListController {
         if (newTask.getText() == null || newTask.getText().equals("")) {
             return ResponseEntity.badRequest().body(null);
         }
-        Task createdTask = repository.create(newTask);
+        TaskResponse createdTask = repository.create(newTask);
         URI location = UriComponentsBuilder.fromPath("/tasks/")
-                .path(createdTask.getId())
+                .path(createdTask.getTask().getId())
                 .build()
                 .toUri();
         return ResponseEntity.created(location).build();
@@ -104,21 +105,15 @@ public class TaskListController {
     @RequestMapping(value = "/{id}", method = DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Task> deleteTask(final @PathVariable("id") String id) {
-        Task task = null;
-        try {
-            task = repository.findTaskById(id);
-        } catch (DatabaseException e) {
-            e.printStackTrace();
+        if (id.matches(
+                "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+        )) {
+            TaskResponse response = repository.removeTaskById(id);
+            if (response.getTask() != null) {
+                return ResponseEntity.ok().build();
+            }
         }
-        if (task == null) {
-            return ResponseEntity.notFound().build();
-        }
-        try {
-            repository.removeTaskById(id);
-        } catch (DatabaseException e) {
-            e.printStackTrace();
-        }
-        return ResponseEntity.ok().build();
+        return ResponseEntity.notFound().build();
     }
 
     /**
@@ -132,19 +127,16 @@ public class TaskListController {
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Task> updateTask(final @PathVariable("id") String id, final @RequestBody UpdateTaskRequest request) {
-        try {
-            repository.editTaskById(request, id);
-            return ResponseEntity.noContent().build();
-        } catch (DatabaseException e) {
-            switch (e.getMessage()) {
-                case "Bad id":
-                    return ResponseEntity.notFound().build();
-                case "Bad status":
-                case "Bad request":
-                    return ResponseEntity.badRequest().build();
-                    default:
-                        return ResponseEntity.noContent().build();
+        if (id.matches(
+                "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+        )) {
+            TaskResponse response = repository.editTaskById(request, id);
+            if (response.getCode() == null) {
+                return ResponseEntity.noContent().build();
+            } else {
+                return response.getCode().getEntity();
             }
         }
+        return ResponseEntity.notFound().build();
     }
 }

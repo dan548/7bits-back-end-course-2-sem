@@ -7,3 +7,5 @@ spring:
       username: daniil
       password: 251853Hero
       driver-class-name: org.postgresql.Driver
+utils:
+  date-pattern: yyyy-MM-dd'T'HH:mm:ssxxx

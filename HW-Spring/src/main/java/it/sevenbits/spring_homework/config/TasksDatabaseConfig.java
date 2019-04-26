@@ -1,4 +1,4 @@
-package it.sevenbits.spring_homework.core.repository.database;
+package it.sevenbits.spring_homework.config;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.flyway.FlywayDataSource;

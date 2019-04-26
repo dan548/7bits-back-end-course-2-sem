@@ -1,7 +1,7 @@
 package it.sevenbits.spring_homework.core.repository;
 
 import it.sevenbits.spring_homework.core.model.Task;
-import it.sevenbits.spring_homework.core.repository.database.DatabaseException;
+import it.sevenbits.spring_homework.core.model.response.TaskResponse;
 import it.sevenbits.spring_homework.web.model.requests.AddTaskRequest;
 import it.sevenbits.spring_homework.web.model.requests.UpdateTaskRequest;
 
@@ -22,9 +22,8 @@ public interface TaskRepository {
      *
      * @param id - id of the task to find
      * @return task with the specified id
-     * @throws DatabaseException always
      */
-    Task findTaskById(String id) throws DatabaseException;
+    TaskResponse findTaskById(String id);
 
     /**
      * Creates a task with the title specified.
@@ -32,7 +31,7 @@ public interface TaskRepository {
      * @param request - task creating request object
      * @return the task created
      */
-    Task create(AddTaskRequest request);
+    TaskResponse create(AddTaskRequest request);
 
     /**
      * Updates a task with the id specified.
@@ -41,15 +40,14 @@ public interface TaskRepository {
      * @param id id of the task to update
      * @return the task created
      */
-    Task editTaskById(UpdateTaskRequest request, String id) throws DatabaseException;
+    TaskResponse editTaskById(UpdateTaskRequest request, String id);
 
     /**
      * Removes a task with the id specified.
      *
      * @param id - id of the task to delete.
-     * @throws DatabaseException always
      */
-    void removeTaskById(String id) throws DatabaseException;
+    TaskResponse removeTaskById(String id);
 
     /**
      * Gets all tasks list.
@@ -59,11 +57,11 @@ public interface TaskRepository {
     List<Task> getAllTasks();
 
     /**
-     * Gets tasks satisfying the filter specified.
+     * Gets tasks with the specified status.
      *
-     * @param predicate - filter predicate
+     * @param status status of the tasks to get
      * @return a filtered list of tasks.
      */
-    List<Task> getTasksFiltered(Predicate<Task> predicate);
+    List<Task> getTasksWithStatus(String status);
 
 }
