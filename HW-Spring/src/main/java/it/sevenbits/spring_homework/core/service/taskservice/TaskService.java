@@ -12,19 +12,36 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Task manipulating service.
+ */
 @Service
 public class TaskService {
 
     private final TaskRepository taskRepository;
 
+    /**
+     * Creates a task service.
+     * @param taskRepository repository to be used by service
+     */
     public TaskService(final TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
     }
 
+    /**
+     * Gets tasks with the specified status.
+     * @param status status of the tasks
+     * @return list of tasks
+     */
     public List<Task> getTasksWithStatus(final String status) {
         return taskRepository.getTasksWithStatus(status);
     }
 
+    /**
+     * Gets task by id.
+     * @param id id of the task
+     * @return the specified task response
+     */
     public TaskResponse findTaskById(final String id) {
         Task task = taskRepository.findTaskById(id);
 
@@ -35,10 +52,20 @@ public class TaskService {
         }
     }
 
+    /**
+     * Creates a task from the request.
+     * @param request request to build the task
+     * @return response
+     */
     public TaskResponse create(final AddTaskRequest request) {
         return new TaskResponse(taskRepository.create(request));
     }
 
+    /**
+     * Removes a task with the specified id.
+     * @param id id of the task to delete
+     * @return response with the task
+     */
     public TaskResponse removeTaskById(final String id) {
         if (id.matches(Regexps.UUID)) {
             Task task = taskRepository.removeTaskById(id);
@@ -49,6 +76,12 @@ public class TaskService {
         return null;
     }
 
+    /**
+     * Edits task with the specified id.
+     * @param request request to edit
+     * @param id id of the task to edit
+     * @return edited task response
+     */
     public TaskResponse editTaskById(final UpdateTaskRequest request, final String id) {
         if (id.matches(Regexps.UUID)) {
             if (request.getStatus() != null) {

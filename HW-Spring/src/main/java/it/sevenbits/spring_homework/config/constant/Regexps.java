@@ -1,7 +1,15 @@
 package it.sevenbits.spring_homework.config.constant;
 
-public class Regexps {
+/**
+ * Class contains regular expressions.
+ */
+public final class Regexps {
 
-    public static String UUID = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$";
+    private Regexps(){}
+
+    /**
+     * UUID pattern.
+     */
+    public static final String UUID = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$";
 
 }

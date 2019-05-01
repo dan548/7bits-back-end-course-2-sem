@@ -7,9 +7,21 @@ import org.springframework.http.ResponseEntity;
  * Error codes for task responses.
  */
 public enum TaskResponseErrorCode {
+    /**
+     * Returned when the status is invalid.
+     */
     BAD_STATUS("Invalid status.", ResponseEntity.badRequest().build()),
+    /**
+     * Returned if the request is invalid.
+     */
     BAD_REQUEST("Invalid request.", ResponseEntity.badRequest().build()),
+    /**
+     * Code is returned if there is no element with such id.
+     */
     NOT_FOUND("Element with such id is not found.", ResponseEntity.notFound().build()),
+    /**
+     * OK code.
+     */
     OK("okay", null);
 
     private String errorCode;
