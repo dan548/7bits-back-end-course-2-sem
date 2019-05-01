@@ -42,14 +42,9 @@ public class DatabaseTaskRepository implements TaskRepository {
 
     @Override
     public Task findTaskById(final String givenId) {
-        List<Task> list = jdbcOperations.query(
+        return jdbcOperations.queryForObject(
                 "SELECT id, text, status, createdAt, updatedAt FROM task WHERE id = ?",
                 DatabaseTaskRepository::mapRow, givenId);
-        if (list.size() >= 1) {
-            return list.get(0);
-        } else {
-            return null;
-        }
     }
 
     @Override
@@ -58,6 +53,7 @@ public class DatabaseTaskRepository implements TaskRepository {
         Task newTask = new Task(UUID.randomUUID().toString(), request.getText(), StatusType.INBOX.toString(), date, date);
         jdbcOperations.update("INSERT INTO task (id, text, status, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?)",
                 newTask.getId(), newTask.getText(), newTask.getStatus(), newTask.getCreatedAt(), newTask.getUpdatedAt());
+
         return newTask;
     }
 
@@ -74,7 +70,7 @@ public class DatabaseTaskRepository implements TaskRepository {
     public List<Task> getAllTasks() {
         return jdbcOperations.query(
                 "SELECT id, text, status, createdat, updatedat FROM task",
-                (resultSet, i) -> mapRow(resultSet, 0));
+                DatabaseTaskRepository::mapRow);
     }
 
     @Override
