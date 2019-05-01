@@ -1,6 +1,6 @@
 package it.sevenbits.spring_homework.config;
 
-import it.sevenbits.spring_homework.core.dategetter.DateGetter;
+import it.sevenbits.spring_homework.core.service.dategetter.DateGetter;
 import it.sevenbits.spring_homework.core.repository.TaskRepository;
 import it.sevenbits.spring_homework.core.repository.database.DatabaseTaskRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,6 +21,7 @@ public class RepositoryConfig {
     /**
      * Constructs a repository implementation
      * @param jdbcOperations current jdbc settings
+     * @param dateGetter date getting service
      * @return specific task repository implementation
      */
     @Bean

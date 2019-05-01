@@ -1,10 +1,8 @@
 package it.sevenbits.spring_homework.core.repository.database;
 
 import it.sevenbits.spring_homework.config.constant.StatusType;
-import it.sevenbits.spring_homework.core.dategetter.DateGetter;
-import it.sevenbits.spring_homework.core.errorcodes.TaskResponseErrorCode;
+import it.sevenbits.spring_homework.core.service.dategetter.DateGetter;
 import it.sevenbits.spring_homework.core.model.Task;
-import it.sevenbits.spring_homework.core.model.response.TaskResponse;
 import it.sevenbits.spring_homework.core.repository.TaskRepository;
 import it.sevenbits.spring_homework.web.model.requests.AddTaskRequest;
 import it.sevenbits.spring_homework.web.model.requests.UpdateTaskRequest;
@@ -43,33 +41,33 @@ public class DatabaseTaskRepository implements TaskRepository {
     }
 
     @Override
-    public TaskResponse findTaskById(final String givenId) {
+    public Task findTaskById(final String givenId) {
         List<Task> list = jdbcOperations.query(
                 "SELECT id, text, status, createdAt, updatedAt FROM task WHERE id = ?",
                 DatabaseTaskRepository::mapRow, givenId);
         if (list.size() >= 1) {
-            return new TaskResponse(list.get(0));
+            return list.get(0);
         } else {
-            return new TaskResponse(TaskResponseErrorCode.NOT_FOUND);
+            return null;
         }
     }
 
     @Override
-    public TaskResponse create(final AddTaskRequest request) {
+    public Task create(final AddTaskRequest request) {
         String date = dateGetter.getDate();
         Task newTask = new Task(UUID.randomUUID().toString(), request.getText(), StatusType.INBOX.toString(), date, date);
         jdbcOperations.update("INSERT INTO task (id, text, status, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?)",
                 newTask.getId(), newTask.getText(), newTask.getStatus(), newTask.getCreatedAt(), newTask.getUpdatedAt());
-        return new TaskResponse(newTask);
+        return newTask;
     }
 
     @Override
-    public TaskResponse removeTaskById(final String id) {
-        TaskResponse response = findTaskById(id);
-        if (response.getCode() == null) {
+    public Task removeTaskById(final String id) {
+        Task task = findTaskById(id);
+        if (task != null) {
             jdbcOperations.update("DELETE FROM task WHERE id=?", id);
         }
-        return response;
+        return task;
     }
 
     @Override
@@ -80,38 +78,29 @@ public class DatabaseTaskRepository implements TaskRepository {
     }
 
     @Override
-    public TaskResponse editTaskById(final UpdateTaskRequest request, final String id) {
+    public Task editTaskById(final UpdateTaskRequest request, final String id) {
         if (request.getStatus() != null) {
-            if (request.getStatus().equals(StatusType.INBOX.toString()) || request.getStatus().equals(StatusType.DONE.toString())) {
-                if (request.getText() != null && !request.getText().equals("")) {
-                    String date = dateGetter.getDate();
-                    if (jdbcOperations.update("UPDATE task SET status = ?, text = ?, updatedat = ? WHERE id = ?",
-                            request.getStatus(), request.getText(), date, id) > 0) {
-                        return new TaskResponse(TaskResponseErrorCode.OK);
-                    }
-                    return new TaskResponse(TaskResponseErrorCode.NOT_FOUND);
-                } else {
-                    String date = dateGetter.getDate();
-                    if (jdbcOperations.update("UPDATE task SET status = ?, updatedat = ? WHERE id = ?",
-                            request.getStatus(), date, id) > 0) {
-                        return new TaskResponse(TaskResponseErrorCode.OK);
-                    }
-                    return new TaskResponse(TaskResponseErrorCode.NOT_FOUND);
+            if (request.getText() != null && !request.getText().equals("")) {
+                String date = dateGetter.getDate();
+                if (jdbcOperations.update("UPDATE task SET status = ?, text = ?, updatedat = ? WHERE id = ?",
+                        request.getStatus(), request.getText(), date, id) > 0) {
+                    return new Task(null, request.getText(), request.getStatus(), null, date);
                 }
-            } else {
-                return new TaskResponse(TaskResponseErrorCode.BAD_STATUS);
-            }
-        } else {
-            if (request.getText() == null || request.getText().equals("")) {
-                return new TaskResponse(TaskResponseErrorCode.BAD_REQUEST);
+                return null;
             } else {
                 String date = dateGetter.getDate();
-                if (jdbcOperations.update("UPDATE task SET text = ?, updatedat = ? WHERE id = ?",
-                        request.getText(), date, id) > 0) {
-                    return new TaskResponse(TaskResponseErrorCode.OK);
+                if (jdbcOperations.update("UPDATE task SET status = ?, updatedat = ? WHERE id = ?",
+                        request.getStatus(), date, id) > 0) {
+                    return new Task(null, null, request.getStatus(), null, date);
                 }
-                return new TaskResponse(TaskResponseErrorCode.NOT_FOUND);
+                return null;
             }
+        } else {
+            String date = dateGetter.getDate();
+            if (jdbcOperations.update("UPDATE task SET text = ?, updatedat = ? WHERE id = ?", request.getText(), date, id) > 0) {
+                return new Task(null, request.getText(), null, null, date);
+            }
+            return null;
         }
     }
 
