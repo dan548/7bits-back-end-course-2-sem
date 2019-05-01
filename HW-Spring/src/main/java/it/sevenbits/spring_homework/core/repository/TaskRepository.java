@@ -6,7 +6,6 @@ import it.sevenbits.spring_homework.web.model.requests.AddTaskRequest;
 import it.sevenbits.spring_homework.web.model.requests.UpdateTaskRequest;
 
 import java.util.List;
-import java.util.function.Predicate;
 
 /**
  * Task repository interface.
@@ -23,7 +22,7 @@ public interface TaskRepository {
      * @param id - id of the task to find
      * @return task with the specified id
      */
-    TaskResponse findTaskById(String id);
+    Task findTaskById(String id);
 
     /**
      * Creates a task with the title specified.
@@ -31,7 +30,7 @@ public interface TaskRepository {
      * @param request - task creating request object
      * @return the task created
      */
-    TaskResponse create(AddTaskRequest request);
+    Task create(AddTaskRequest request);
 
     /**
      * Updates a task with the id specified.
@@ -40,14 +39,15 @@ public interface TaskRepository {
      * @param id id of the task to update
      * @return the task created
      */
-    TaskResponse editTaskById(UpdateTaskRequest request, String id);
+    Task editTaskById(UpdateTaskRequest request, String id);
 
     /**
      * Removes a task with the id specified.
      *
      * @param id - id of the task to delete.
+     * @return response saying if the task was deleted
      */
-    TaskResponse removeTaskById(String id);
+    Task removeTaskById(String id);
 
     /**
      * Gets all tasks list.

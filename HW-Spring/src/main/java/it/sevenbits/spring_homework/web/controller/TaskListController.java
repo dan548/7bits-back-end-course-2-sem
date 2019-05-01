@@ -1,11 +1,11 @@
 package it.sevenbits.spring_homework.web.controller;
 
-import it.sevenbits.spring_homework.config.constant.StatusType;
+import it.sevenbits.spring_homework.config.constant.Regexps;
 import it.sevenbits.spring_homework.core.model.Task;
 import it.sevenbits.spring_homework.core.model.response.TaskResponse;
+import it.sevenbits.spring_homework.core.service.taskservice.TaskService;
 import it.sevenbits.spring_homework.web.model.requests.AddTaskRequest;
 import it.sevenbits.spring_homework.web.model.requests.UpdateTaskRequest;
-import it.sevenbits.spring_homework.core.repository.TaskRepository;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,6 +19,7 @@ import java.util.List;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
+
 /**
  * Task controller class.
  * @since 1.0
@@ -29,15 +30,15 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 @RequestMapping("/tasks")
 public class TaskListController {
 
-    private final TaskRepository repository;
+    private final TaskService service;
 
     /**
      * Controller constructor.
      *
-     * @param repository repository implementation to use with controller
+     * @param service application layer to use with controller
      */
-    public TaskListController(final TaskRepository repository) {
-        this.repository = repository;
+    public TaskListController(final TaskService service) {
+        this.service = service;
     }
 
     /**
@@ -51,7 +52,7 @@ public class TaskListController {
     @ResponseBody
     public List<Task> getAllTasks(final @RequestParam(name = "status", defaultValue = "inbox") String status) {
 
-        return repository.getTasksWithStatus(status);
+        return service.getTasksWithStatus(status);
     }
 
     /**
@@ -63,10 +64,8 @@ public class TaskListController {
     @RequestMapping(value = "/{id}", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Task> getTaskById(final @PathVariable("id") String id) {
-        if (id.matches(
-                "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-        )) {
-            TaskResponse task = repository.findTaskById(id);
+        if (id.matches(Regexps.UUID)) {
+            TaskResponse task = service.findTaskById(id);
             if (task == null) {
                 return ResponseEntity.notFound().build();
             }
@@ -88,7 +87,7 @@ public class TaskListController {
         if (newTask.getText() == null || newTask.getText().equals("")) {
             return ResponseEntity.badRequest().body(null);
         }
-        TaskResponse createdTask = repository.create(newTask);
+        TaskResponse createdTask = service.create(newTask);
         URI location = UriComponentsBuilder.fromPath("/tasks/")
                 .path(createdTask.getTask().getId())
                 .build()
@@ -105,11 +104,9 @@ public class TaskListController {
     @RequestMapping(value = "/{id}", method = DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Task> deleteTask(final @PathVariable("id") String id) {
-        if (id.matches(
-                "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-        )) {
-            TaskResponse response = repository.removeTaskById(id);
-            if (response.getTask() != null) {
+        if (id.matches(Regexps.UUID)) {
+            TaskResponse response = service.removeTaskById(id);
+            if (response != null) {
                 return ResponseEntity.ok().build();
             }
         }
@@ -127,10 +124,8 @@ public class TaskListController {
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Task> updateTask(final @PathVariable("id") String id, final @RequestBody UpdateTaskRequest request) {
-        if (id.matches(
-                "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-        )) {
-            TaskResponse response = repository.editTaskById(request, id);
+        if (id.matches(Regexps.UUID)) {
+            TaskResponse response = service.editTaskById(request, id);
             if (response.getCode() == null) {
                 return ResponseEntity.noContent().build();
             } else {
