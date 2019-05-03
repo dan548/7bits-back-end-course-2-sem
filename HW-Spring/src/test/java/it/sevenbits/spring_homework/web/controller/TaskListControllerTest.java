@@ -1,6 +1,7 @@
 package it.sevenbits.spring_homework.web.controller;
 
 import it.sevenbits.spring_homework.config.constant.StatusType;
+import it.sevenbits.spring_homework.core.errorcodes.TaskResponseErrorCode;
 import it.sevenbits.spring_homework.core.model.Task;
 import it.sevenbits.spring_homework.core.model.response.TaskResponse;
 import it.sevenbits.spring_homework.core.service.taskservice.TaskService;
@@ -52,6 +53,26 @@ public class TaskListControllerTest {
     }
 
     @Test
+    public void testGetTaskByIdNotFound() {
+        String taskId = "a55256a8-1245-4c2c-82da-a7846365079d";
+        when(mockService.findTaskById(anyString())).thenReturn(null);
+
+        ResponseEntity<Task> answer = controller.getTaskById(taskId);
+        verify(mockService, times(1)).findTaskById(taskId);
+        assertEquals(HttpStatus.NOT_FOUND, answer.getStatusCode());
+    }
+
+    @Test
+    public void testGetTaskByIdBadId() {
+        String taskId = "a";
+        when(mockService.findTaskById(anyString())).thenReturn(null);
+
+        ResponseEntity<Task> answer = controller.getTaskById(taskId);
+        verify(mockService, times(0)).findTaskById(taskId);
+        assertEquals(HttpStatus.NOT_FOUND, answer.getStatusCode());
+    }
+
+    @Test
     public void testCreate() {
         Task mockTask = mock(Task.class);
         TaskResponse response = new TaskResponse(mockTask);
@@ -61,6 +82,18 @@ public class TaskListControllerTest {
         ResponseEntity<Task> answer = controller.create(request);
         verify(mockService, times(1)).create(eq(request));
         assertEquals(HttpStatus.CREATED, answer.getStatusCode());
+    }
+
+    @Test
+    public void testCreateBadRequest() {
+        Task mockTask = mock(Task.class);
+        TaskResponse response = new TaskResponse(mockTask);
+        AddTaskRequest request = mock(AddTaskRequest.class);
+        when(mockService.create(any(AddTaskRequest.class))).thenReturn(response);
+
+        ResponseEntity<Task> answer = controller.create(request);
+        verify(mockService, times(0)).create(any(AddTaskRequest.class));
+        assertEquals(HttpStatus.BAD_REQUEST, answer.getStatusCode());
     }
 
     @Test
@@ -76,6 +109,18 @@ public class TaskListControllerTest {
     }
 
     @Test
+    public void testDeleteTaskBadId() {
+        String taskId = "a52da-a7846365079d";
+        Task mockTask = mock(Task.class);
+        TaskResponse response = new TaskResponse(mockTask);
+        when(mockService.removeTaskById(anyString())).thenReturn(response);
+
+        ResponseEntity<Task> answer = controller.deleteTask(taskId);
+        verify(mockService, times(0)).removeTaskById(taskId);
+        assertEquals(HttpStatus.NOT_FOUND, answer.getStatusCode());
+    }
+
+    @Test
     public void testUpdateTask() {
         String taskId = "a55256a8-1245-4c2c-82da-a7846365079d";
         Task mockTask = mock(Task.class);
@@ -86,6 +131,31 @@ public class TaskListControllerTest {
         ResponseEntity<Task> answer = controller.updateTask(taskId, request);
         verify(mockService, times(1)).editTaskById(eq(request), eq(taskId));
         assertEquals(HttpStatus.NO_CONTENT, answer.getStatusCode());
+    }
+
+    @Test
+    public void testUpdateTaskBadId() {
+        String taskId = "a55256a8-1247846365079d";
+        Task mockTask = mock(Task.class);
+        TaskResponse response = new TaskResponse(mockTask);
+        UpdateTaskRequest request = new UpdateTaskRequest(StatusType.DONE.toString(),"a");
+        when(mockService.editTaskById(any(UpdateTaskRequest.class), anyString())).thenReturn(response);
+
+        ResponseEntity<Task> answer = controller.updateTask(taskId, request);
+        verify(mockService, times(0)).editTaskById(eq(request), eq(taskId));
+        assertEquals(HttpStatus.NOT_FOUND, answer.getStatusCode());
+    }
+
+    @Test
+    public void testUpdateTaskBadRequest() {
+        String taskId = "a55256a8-1245-4c2c-82da-a7846365079d";
+        TaskResponse response = new TaskResponse(TaskResponseErrorCode.BAD_REQUEST);
+        UpdateTaskRequest request = mock(UpdateTaskRequest.class);
+        when(mockService.editTaskById(any(UpdateTaskRequest.class), anyString())).thenReturn(response);
+
+        ResponseEntity<Task> answer = controller.updateTask(taskId, request);
+        verify(mockService, times(1)).editTaskById(eq(request), eq(taskId));
+        assertEquals(HttpStatus.BAD_REQUEST, answer.getStatusCode());
     }
 
 }

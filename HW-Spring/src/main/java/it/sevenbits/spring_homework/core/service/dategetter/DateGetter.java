@@ -24,6 +24,10 @@ public class DateGetter {
                 .format(DateTimeFormatter.ofPattern(datePattern));
     }
 
+    public String getDatePattern() {
+        return datePattern;
+    }
+
     public void setDatePattern(final String datePattern) {
         this.datePattern = datePattern;
     }

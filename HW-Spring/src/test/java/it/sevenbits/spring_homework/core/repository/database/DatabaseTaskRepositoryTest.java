@@ -144,6 +144,46 @@ public class DatabaseTaskRepositoryTest {
     }
 
     @Test
+    public void testEditTaskByIdFail() {
+        String taskId = "a55256a8-1245-4c2c-82da-a7846365079d";
+        UpdateTaskRequest first = new UpdateTaskRequest(null, "ab");
+        UpdateTaskRequest second = new UpdateTaskRequest(StatusType.INBOX.toString(), null);
+        UpdateTaskRequest third = new UpdateTaskRequest(StatusType.DONE.toString(), "ab");
+
+        when(mockJdbcOperations.update(anyString(), anyString(), anyString(), anyString(), eq(taskId))).thenReturn(0);
+        when(mockJdbcOperations.update(anyString(), anyString(), anyString(), eq(taskId))).thenReturn(0);
+
+        Task expectedTaskThree = repository.editTaskById(third, taskId);
+        Task expectedTaskTwo = repository.editTaskById(second, taskId);
+        Task expectedTaskOne = repository.editTaskById(first, taskId);
+
+        verify(mockJdbcOperations, times(1)).update(
+                eq("UPDATE task SET status = ?, text = ?, updatedat = ? WHERE id = ?"),
+                eq(third.getStatus()),
+                eq(third.getText()),
+                anyString(),
+                eq(taskId)
+        );
+
+        verify(mockJdbcOperations, times(1)).update(
+                eq("UPDATE task SET status = ?, updatedat = ? WHERE id = ?"),
+                eq(second.getStatus()),
+                anyString(),
+                eq(taskId)
+        );
+
+        verify(mockJdbcOperations, times(1)).update(
+                eq("UPDATE task SET text = ?, updatedat = ? WHERE id = ?"),
+                eq(first.getText()),
+                anyString(),
+                eq(taskId)
+        );
+        assertNull(expectedTaskOne);
+        assertNull(expectedTaskTwo);
+        assertNull(expectedTaskThree);
+    }
+
+    @Test
     public void testGetTasksWithStatus() {
         String status = StatusType.INBOX.toString();
 

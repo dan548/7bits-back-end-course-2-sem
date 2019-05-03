@@ -100,7 +100,7 @@ public class TaskService {
                 } else {
                     Task task = taskRepository.editTaskById(request, id);
                     if (task != null) {
-                        return new TaskResponse(TaskResponseErrorCode.OK);
+                        return new TaskResponse(task);
                     }
                     return new TaskResponse(TaskResponseErrorCode.NOT_FOUND);
                 }
