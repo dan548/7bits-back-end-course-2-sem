@@ -106,4 +106,22 @@ public class DatabaseTaskRepository implements TaskRepository {
                 "SELECT id, text, status, createdat, updatedat FROM task WHERE status=?",
                 DatabaseTaskRepository::mapRow, status);
     }
+
+    @Override
+    public List<Task> getTaskPage(final String status, final String order, final int page, final int size) {
+        if ("asc".equals(order)) {
+            return jdbcOperations.query(
+                    "SELECT id, text, status, createdat, updatedat FROM task WHERE status = ? ORDER BY createdat ASC LIMIT ? OFFSET ?",
+                    DatabaseTaskRepository::mapRow, status, size, (page - 1) * size);
+        } else {
+            return jdbcOperations.query(
+                    "SELECT id, text, status, createdat, updatedat FROM task WHERE status = ? ORDER BY createdat DESC LIMIT ? OFFSET ?",
+                    DatabaseTaskRepository::mapRow, status, size, (page - 1) * size);
+        }
+    }
+
+    @Override
+    public Integer getSize(final String status) {
+        return jdbcOperations.queryForObject("SELECT COUNT(*) FROM task WHERE status=?", Integer.class, status);
+    }
 }

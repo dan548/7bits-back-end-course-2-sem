@@ -3,7 +3,7 @@ package it.sevenbits.spring_homework.web.controller;
 import it.sevenbits.spring_homework.config.constant.StatusType;
 import it.sevenbits.spring_homework.core.errorcodes.TaskResponseErrorCode;
 import it.sevenbits.spring_homework.core.model.Task;
-import it.sevenbits.spring_homework.core.model.response.TaskResponse;
+import it.sevenbits.spring_homework.core.model.service_response.TaskResponse;
 import it.sevenbits.spring_homework.core.service.taskservice.TaskService;
 import it.sevenbits.spring_homework.web.model.requests.AddTaskRequest;
 import it.sevenbits.spring_homework.web.model.requests.UpdateTaskRequest;
@@ -11,8 +11,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -27,16 +25,6 @@ public class TaskListControllerTest {
     public void setup() {
         mockService = mock(TaskService.class);
         controller = new TaskListController(mockService);
-    }
-
-    @Test
-    public void testGetAllTasks() {
-        List<Task> mockTasks = mock(List.class);
-        when(mockService.getTasksWithStatus(anyString())).thenReturn(mockTasks);
-
-        List<Task> answer = controller.getAllTasks(StatusType.INBOX.toString());
-        verify(mockService, times(1)).getTasksWithStatus(eq(StatusType.INBOX.toString()));
-        assertSame(mockTasks, answer);
     }
 
     @Test
@@ -157,5 +145,4 @@ public class TaskListControllerTest {
         verify(mockService, times(1)).editTaskById(eq(request), eq(taskId));
         assertEquals(HttpStatus.BAD_REQUEST, answer.getStatusCode());
     }
-
 }

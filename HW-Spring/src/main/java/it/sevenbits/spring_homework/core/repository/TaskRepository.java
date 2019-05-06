@@ -63,4 +63,22 @@ public interface TaskRepository {
      */
     List<Task> getTasksWithStatus(String status);
 
+    /**
+     * Gets a page of tasks.
+     *
+     * @param status status of the tasks to get
+     * @param order order of tasks
+     * @param page current page
+     * @param size page size
+     * @return page of tasks
+     */
+    List<Task> getTaskPage(String status, String order, int page, int size);
+
+    /**
+     * Gets task count.
+     * @param status status of tasks
+     * @return task count
+     */
+    Integer getSize(String status);
+
 }

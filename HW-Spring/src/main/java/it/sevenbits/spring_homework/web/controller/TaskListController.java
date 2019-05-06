@@ -1,8 +1,9 @@
 package it.sevenbits.spring_homework.web.controller;
 
 import it.sevenbits.spring_homework.config.constant.Regexps;
+import it.sevenbits.spring_homework.core.model.GetTasksResponse;
 import it.sevenbits.spring_homework.core.model.Task;
-import it.sevenbits.spring_homework.core.model.response.TaskResponse;
+import it.sevenbits.spring_homework.core.model.service_response.TaskResponse;
 import it.sevenbits.spring_homework.core.service.taskservice.TaskService;
 import it.sevenbits.spring_homework.web.model.requests.AddTaskRequest;
 import it.sevenbits.spring_homework.web.model.requests.UpdateTaskRequest;
@@ -48,11 +49,14 @@ public class TaskListController {
      * @return all tasks with specific status
      */
     @RequestMapping(method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public List<Task> getAllTasks(final @RequestParam(name = "status", defaultValue = "inbox") String status) {
-
-        return service.getTasksWithStatus(status);
+    public ResponseEntity<GetTasksResponse> getAllTasks(final @RequestParam(name = "status", defaultValue = "inbox") String status,
+                                                        final @RequestParam(name = "order", defaultValue = "desc") String order,
+                                                        final @RequestParam(name = "page", defaultValue = "1") Integer page,
+                                                        final @RequestParam(name = "size", defaultValue = "25") Integer size) {
+        UriComponentsBuilder rootBuilder = UriComponentsBuilder.fromPath("/tasks");
+        GetTasksResponse response = service.getTasks(status, order, page, size, rootBuilder);
+        return ResponseEntity.ok(response);
     }
 
     /**

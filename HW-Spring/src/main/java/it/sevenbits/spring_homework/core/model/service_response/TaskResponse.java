@@ -1,4 +1,4 @@
-package it.sevenbits.spring_homework.core.model.response;
+package it.sevenbits.spring_homework.core.model.service_response;
 
 import it.sevenbits.spring_homework.core.errorcodes.TaskResponseErrorCode;
 import it.sevenbits.spring_homework.core.model.Task;
