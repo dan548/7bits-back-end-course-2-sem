@@ -8,6 +8,7 @@ import it.sevenbits.spring_homework.web.model.requests.UpdateTaskRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalMatchers;
+import org.mockito.Mockito;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -105,17 +106,17 @@ public class DatabaseTaskRepositoryTest {
         String taskId = "a55256a8-1245-4c2c-82da-a7846365079d";
         UpdateTaskRequest first = new UpdateTaskRequest(null, "ab");
         UpdateTaskRequest second = new UpdateTaskRequest(StatusType.INBOX.toString(), null);
-        UpdateTaskRequest third = new UpdateTaskRequest(StatusType.DONE.toString(), "ab");
+        UpdateTaskRequest third = new UpdateTaskRequest(StatusType.DONE.toString(), "abc");
 
-        when(mockJdbcOperations.update(anyString(), anyString(), anyString(), anyString(), eq(taskId))).thenReturn(1);
-        when(mockJdbcOperations.update(anyString(), anyString(), anyString(), eq(taskId))).thenReturn(1);
+        when(mockJdbcOperations.update(anyString(), Mockito.<String>any(), Mockito.<String>any(), anyString(), eq(taskId))).thenReturn(1);
 
         Task expectedTaskThree = repository.editTaskById(third, taskId);
         Task expectedTaskTwo = repository.editTaskById(second, taskId);
         Task expectedTaskOne = repository.editTaskById(first, taskId);
 
         verify(mockJdbcOperations, times(1)).update(
-                eq("UPDATE task SET status = ?, text = ?, updatedat = ? WHERE id = ?"),
+                eq("UPDATE task SET status = COALESCE(?, status), text = COALESCE(?, text)," +
+                        " updatedat = ? WHERE id = ?"),
                 eq(third.getStatus()),
                 eq(third.getText()),
                 anyString(),
@@ -123,14 +124,18 @@ public class DatabaseTaskRepositoryTest {
         );
 
         verify(mockJdbcOperations, times(1)).update(
-                eq("UPDATE task SET status = ?, updatedat = ? WHERE id = ?"),
+                eq("UPDATE task SET status = COALESCE(?, status), text = COALESCE(?, text)," +
+                        " updatedat = ? WHERE id = ?"),
                 eq(second.getStatus()),
+                isNull(),
                 anyString(),
                 eq(taskId)
         );
 
         verify(mockJdbcOperations, times(1)).update(
-                eq("UPDATE task SET text = ?, updatedat = ? WHERE id = ?"),
+                eq("UPDATE task SET status = COALESCE(?, status), text = COALESCE(?, text)," +
+                        " updatedat = ? WHERE id = ?"),
+                isNull(),
                 eq(first.getText()),
                 anyString(),
                 eq(taskId)
@@ -139,7 +144,7 @@ public class DatabaseTaskRepositoryTest {
         assertNull( expectedTaskOne.getStatus());
         assertEquals(StatusType.INBOX.toString(), expectedTaskTwo.getStatus());
         assertNull( expectedTaskTwo.getText());
-        assertEquals("ab", expectedTaskThree.getText());
+        assertEquals("abc", expectedTaskThree.getText());
         assertEquals(StatusType.DONE.toString(), expectedTaskThree.getStatus());
     }
 
@@ -158,7 +163,8 @@ public class DatabaseTaskRepositoryTest {
         Task expectedTaskOne = repository.editTaskById(first, taskId);
 
         verify(mockJdbcOperations, times(1)).update(
-                eq("UPDATE task SET status = ?, text = ?, updatedat = ? WHERE id = ?"),
+                eq("UPDATE task SET status = COALESCE(?, status), text = COALESCE(?, text)," +
+                        " updatedat = ? WHERE id = ?"),
                 eq(third.getStatus()),
                 eq(third.getText()),
                 anyString(),
@@ -166,14 +172,18 @@ public class DatabaseTaskRepositoryTest {
         );
 
         verify(mockJdbcOperations, times(1)).update(
-                eq("UPDATE task SET status = ?, updatedat = ? WHERE id = ?"),
+                eq("UPDATE task SET status = COALESCE(?, status), text = COALESCE(?, text)," +
+                        " updatedat = ? WHERE id = ?"),
                 eq(second.getStatus()),
+                isNull(),
                 anyString(),
                 eq(taskId)
         );
 
         verify(mockJdbcOperations, times(1)).update(
-                eq("UPDATE task SET text = ?, updatedat = ? WHERE id = ?"),
+                eq("UPDATE task SET status = COALESCE(?, status), text = COALESCE(?, text)," +
+                        " updatedat = ? WHERE id = ?"),
+                isNull(),
                 eq(first.getText()),
                 anyString(),
                 eq(taskId)

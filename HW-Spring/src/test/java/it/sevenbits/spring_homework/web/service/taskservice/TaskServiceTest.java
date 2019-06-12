@@ -1,4 +1,4 @@
-package it.sevenbits.spring_homework.core.service.taskservice;
+package it.sevenbits.spring_homework.web.service.taskservice;
 
 import it.sevenbits.spring_homework.config.constant.StatusType;
 import it.sevenbits.spring_homework.core.errorcodes.TaskResponseErrorCode;
@@ -7,6 +7,7 @@ import it.sevenbits.spring_homework.core.model.response.TaskResponse;
 import it.sevenbits.spring_homework.core.repository.TaskRepository;
 import it.sevenbits.spring_homework.web.model.requests.AddTaskRequest;
 import it.sevenbits.spring_homework.web.model.requests.UpdateTaskRequest;
+import it.sevenbits.spring_homework.web.service.taskservice.TaskService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
