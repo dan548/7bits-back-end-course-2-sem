@@ -8,12 +8,12 @@ import it.sevenbits.spring_homework.core.repository.TaskRepository;
 import it.sevenbits.spring_homework.web.model.requests.AddTaskRequest;
 import it.sevenbits.spring_homework.web.model.requests.UpdateTaskRequest;
 import it.sevenbits.spring_homework.web.service.taskservice.TaskService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -22,7 +22,7 @@ public class TaskServiceTest {
     private TaskRepository mockRepository;
     private TaskService service;
 
-    @BeforeEach
+    @Before
     public void setup() {
         mockRepository = mock(TaskRepository.class);
         service = new TaskService(mockRepository);

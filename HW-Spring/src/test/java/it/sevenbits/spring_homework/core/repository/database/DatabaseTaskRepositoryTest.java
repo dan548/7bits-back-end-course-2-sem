@@ -5,8 +5,8 @@ import it.sevenbits.spring_homework.core.model.Task;
 import it.sevenbits.spring_homework.core.service.dategetter.DateGetter;
 import it.sevenbits.spring_homework.web.model.requests.AddTaskRequest;
 import it.sevenbits.spring_homework.web.model.requests.UpdateTaskRequest;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.AdditionalMatchers;
 import org.mockito.Mockito;
 import org.springframework.jdbc.core.JdbcOperations;
@@ -14,7 +14,9 @@ import org.springframework.jdbc.core.RowMapper;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static junit.framework.TestCase.assertNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -23,7 +25,7 @@ public class DatabaseTaskRepositoryTest {
     private JdbcOperations mockJdbcOperations;
     private DatabaseTaskRepository repository;
 
-    @BeforeEach
+    @Before
     public void setup() {
         mockJdbcOperations = mock(JdbcOperations.class);
         DateGetter getter = new DateGetter("yyyy-MM-dd'T'HH:mm:ssxxx");

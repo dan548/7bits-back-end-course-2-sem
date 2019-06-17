@@ -1,9 +1,9 @@
 package it.sevenbits.spring_homework.core.errorcodes;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.springframework.http.ResponseEntity;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 public class TestTaskResponseErrorCode {
 
