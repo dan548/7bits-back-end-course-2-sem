@@ -1,8 +1,8 @@
 package it.sevenbits.spring_homework.core.service.dategetter;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 public class DateGetterTest {
 

@@ -1,4 +1,4 @@
-package it.sevenbits.spring_homework.core.service.taskservice;
+package it.sevenbits.spring_homework.web.service.taskservice;
 
 import it.sevenbits.spring_homework.config.constant.Regexps;
 import it.sevenbits.spring_homework.config.constant.StatusType;

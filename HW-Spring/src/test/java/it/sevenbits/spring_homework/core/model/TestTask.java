@@ -1,16 +1,17 @@
 package it.sevenbits.spring_homework.core.model;
 
 import it.sevenbits.spring_homework.config.constant.StatusType;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.assertEquals;
+
 
 public class TestTask {
 
     private Task task;
 
-    @BeforeEach
+    @Before
     public void setup() {
         task = new Task("a", "b", "c", "d", "e");
     }

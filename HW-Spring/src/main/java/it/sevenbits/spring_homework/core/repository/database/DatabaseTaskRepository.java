@@ -6,6 +6,7 @@ import it.sevenbits.spring_homework.core.model.Task;
 import it.sevenbits.spring_homework.core.repository.TaskRepository;
 import it.sevenbits.spring_homework.web.model.requests.AddTaskRequest;
 import it.sevenbits.spring_homework.web.model.requests.UpdateTaskRequest;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcOperations;
 
 import java.sql.ResultSet;
@@ -42,9 +43,13 @@ public class DatabaseTaskRepository implements TaskRepository {
 
     @Override
     public Task findTaskById(final String givenId) {
-        return jdbcOperations.queryForObject(
-                "SELECT id, text, status, createdAt, updatedAt FROM task WHERE id = ?",
-                DatabaseTaskRepository::mapRow, givenId);
+        try {
+            return jdbcOperations.queryForObject(
+                    "SELECT id, text, status, createdAt, updatedAt FROM task WHERE id = ?",
+                    DatabaseTaskRepository::mapRow, givenId);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
     }
 
     @Override
@@ -76,25 +81,20 @@ public class DatabaseTaskRepository implements TaskRepository {
     @Override
     public Task editTaskById(final UpdateTaskRequest request, final String id) {
         if (request.getStatus() != null) {
+            String date = dateGetter.getDate();
+            if (jdbcOperations.update("UPDATE task SET status = COALESCE(?, status), text = COALESCE(?, text), updatedat = ? WHERE id = ?",
+                    request.getStatus(), request.getText(), date, id) > 0) {
+                return new Task(null, request.getText(), request.getStatus(), null, date);
+            }
+            return null;
+        } else {
             if (request.getText() != null && !request.getText().equals("")) {
                 String date = dateGetter.getDate();
-                if (jdbcOperations.update("UPDATE task SET status = ?, text = ?, updatedat = ? WHERE id = ?",
+                if (jdbcOperations.update("UPDATE task SET status = COALESCE(?, status), text = COALESCE(?, text), " +
+                                "updatedat = ? WHERE id = ?",
                         request.getStatus(), request.getText(), date, id) > 0) {
                     return new Task(null, request.getText(), request.getStatus(), null, date);
                 }
-                return null;
-            } else {
-                String date = dateGetter.getDate();
-                if (jdbcOperations.update("UPDATE task SET status = ?, updatedat = ? WHERE id = ?",
-                        request.getStatus(), date, id) > 0) {
-                    return new Task(null, null, request.getStatus(), null, date);
-                }
-                return null;
-            }
-        } else {
-            String date = dateGetter.getDate();
-            if (jdbcOperations.update("UPDATE task SET text = ?, updatedat = ? WHERE id = ?", request.getText(), date, id) > 0) {
-                return new Task(null, request.getText(), null, null, date);
             }
             return null;
         }

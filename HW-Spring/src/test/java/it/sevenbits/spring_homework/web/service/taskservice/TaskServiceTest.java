@@ -1,19 +1,19 @@
-package it.sevenbits.spring_homework.core.service.taskservice;
+package it.sevenbits.spring_homework.web.service.taskservice;
 
 import it.sevenbits.spring_homework.config.constant.StatusType;
 import it.sevenbits.spring_homework.core.errorcodes.TaskResponseErrorCode;
 import it.sevenbits.spring_homework.core.model.Task;
-import it.sevenbits.spring_homework.core.model.service_response.TaskResponse;
+import it.sevenbits.spring_homework.core.model.response.TaskResponse;
 import it.sevenbits.spring_homework.core.repository.TaskRepository;
 import it.sevenbits.spring_homework.web.model.requests.AddTaskRequest;
 import it.sevenbits.spring_homework.web.model.requests.UpdateTaskRequest;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.web.util.UriComponentsBuilder;
+import it.sevenbits.spring_homework.web.service.taskservice.TaskService;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -22,10 +22,20 @@ public class TaskServiceTest {
     private TaskRepository mockRepository;
     private TaskService service;
 
-    @BeforeEach
+    @Before
     public void setup() {
         mockRepository = mock(TaskRepository.class);
         service = new TaskService(mockRepository);
+    }
+
+    @Test
+    public void testGetTasksWithStatus() {
+        List<Task> mockListTasks = mock(List.class);
+        when(mockRepository.getTasksWithStatus(anyString())).thenReturn(mockListTasks);
+
+        List<Task> result = service.getTasksWithStatus(StatusType.DONE.toString());
+        verify(mockRepository, times(1)).getTasksWithStatus(eq(StatusType.DONE.toString()));
+        assertSame(mockListTasks, result);
     }
 
     @Test
@@ -160,22 +170,5 @@ public class TaskServiceTest {
         TaskResponse result = service.editTaskById(request, taskId);
         verify(mockRepository, times(1)).editTaskById(request, taskId);
         assertSame(mockTask, result.getTask());
-    }
-
-    @Test
-    public void testGetTasks() {
-        List<Task> mockList = mock(List.class);
-        when(mockRepository.getSize(anyString())).thenReturn(93);
-        when(mockRepository.getTaskPage(anyString(), anyString(), anyInt(), anyInt())).thenReturn(mockList);
-
-        String status = "inbox";
-        String order = "desc";
-        int page = 1;
-        int size = 25;
-        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromPath("/tasks");;
-
-        service.getTasks(status, order, page, size, uriComponentsBuilder);
-
-        verify(mockRepository, times(1)).getTaskPage(status, order, page, size);
     }
 }
