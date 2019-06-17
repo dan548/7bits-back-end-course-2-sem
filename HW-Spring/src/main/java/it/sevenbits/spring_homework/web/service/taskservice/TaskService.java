@@ -13,8 +13,6 @@ import it.sevenbits.spring_homework.web.model.requests.UpdateTaskRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.List;
-
 /**
  * Task manipulating service.
  */
@@ -22,6 +20,8 @@ import java.util.List;
 public class TaskService {
 
     private final TaskRepository taskRepository;
+    private final int minSize = 10;
+    private final int maxSize = 50;
 
     /**
      * Creates a task service.
@@ -43,7 +43,7 @@ public class TaskService {
     public GetTasksResponse getTasks(final String status, final String order, final Integer page,
                                      final Integer size, final UriComponentsBuilder builder) {
         if (!"inbox".equals(status) && !"done".equals(status) || !"desc".equals(order) && !"asc".equals(order)
-                || page == null || size == null || size < 10 || size > 50 || page < 1) {
+                || page == null || size == null || size < minSize || size > maxSize || page < 1) {
             return null;
         }
         Integer fullSize = taskRepository.getSize(status);
@@ -97,14 +97,8 @@ public class TaskService {
      * @param id id of the task
      * @return the specified task response
      */
-    public TaskResponse findTaskById(final String id) {
-        Task task = taskRepository.findTaskById(id);
-
-        if (task == null) {
-            return new TaskResponse(TaskResponseErrorCode.NOT_FOUND);
-        } else {
-            return new TaskResponse(task);
-        }
+    public Task findTaskById(final String id) {
+        return taskRepository.findTaskById(id);
     }
 
     /**
@@ -112,8 +106,8 @@ public class TaskService {
      * @param request request to build the task
      * @return response
      */
-    public TaskResponse create(final AddTaskRequest request) {
-        return new TaskResponse(taskRepository.create(request));
+    public Task create(final AddTaskRequest request) {
+        return taskRepository.create(request);
     }
 
     /**
@@ -121,12 +115,9 @@ public class TaskService {
      * @param id id of the task to delete
      * @return response with the task
      */
-    public TaskResponse removeTaskById(final String id) {
+    public Task removeTaskById(final String id) {
         if (id.matches(Regexps.UUID)) {
-            Task task = taskRepository.removeTaskById(id);
-            if (task != null) {
-                return new TaskResponse(task);
-            }
+            return taskRepository.removeTaskById(id);
         }
         return null;
     }
@@ -141,9 +132,9 @@ public class TaskService {
         if (id.matches(Regexps.UUID)) {
             if (request.getStatus() != null) {
                 if (request.getStatus().equals(StatusType.INBOX.toString()) || request.getStatus().equals(StatusType.DONE.toString())) {
-                    Task task = taskRepository.editTaskById(request, id);
-                    if (task != null) {
-                        return new TaskResponse(task);
+                    int changed = taskRepository.editTaskById(request, id);
+                    if (changed != 0) {
+                        return new TaskResponse();
                     }
                     return new TaskResponse(TaskResponseErrorCode.NOT_FOUND);
                 } else {
@@ -153,9 +144,9 @@ public class TaskService {
                 if (request.getText() == null || request.getText().equals("")) {
                     return new TaskResponse(TaskResponseErrorCode.BAD_REQUEST);
                 } else {
-                    Task task = taskRepository.editTaskById(request, id);
-                    if (task != null) {
-                        return new TaskResponse(task);
+                    int changed = taskRepository.editTaskById(request, id);
+                    if (changed != 0) {
+                        return new TaskResponse();
                     }
                     return new TaskResponse(TaskResponseErrorCode.NOT_FOUND);
                 }

@@ -79,25 +79,10 @@ public class DatabaseTaskRepository implements TaskRepository {
     }
 
     @Override
-    public Task editTaskById(final UpdateTaskRequest request, final String id) {
-        if (request.getStatus() != null) {
-            String date = dateGetter.getDate();
-            if (jdbcOperations.update("UPDATE task SET status = COALESCE(?, status), text = COALESCE(?, text), updatedat = ? WHERE id = ?",
-                    request.getStatus(), request.getText(), date, id) > 0) {
-                return new Task(null, request.getText(), request.getStatus(), null, date);
-            }
-            return null;
-        } else {
-            if (request.getText() != null && !request.getText().equals("")) {
-                String date = dateGetter.getDate();
-                if (jdbcOperations.update("UPDATE task SET status = COALESCE(?, status), text = COALESCE(?, text), " +
-                                "updatedat = ? WHERE id = ?",
-                        request.getStatus(), request.getText(), date, id) > 0) {
-                    return new Task(null, request.getText(), request.getStatus(), null, date);
-                }
-            }
-            return null;
-        }
+    public int editTaskById(final UpdateTaskRequest request, final String id) {
+        String date = dateGetter.getDate();
+        return jdbcOperations.update("UPDATE task SET status = COALESCE(?, status), text = COALESCE(?, text), " +
+                        "updatedat = ? WHERE id = ?", request.getStatus(), request.getText(), date, id);
     }
 
     @Override

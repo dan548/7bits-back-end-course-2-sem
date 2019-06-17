@@ -36,9 +36,9 @@ public interface TaskRepository {
      *
      * @param request - task updating request object
      * @param id id of the task to update
-     * @return the task created
+     * @return number of tasks changed
      */
-    Task editTaskById(UpdateTaskRequest request, String id);
+    int editTaskById(UpdateTaskRequest request, String id);
 
     /**
      * Removes a task with the id specified.

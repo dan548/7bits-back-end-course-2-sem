@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.AdditionalMatchers;
 import org.mockito.Mockito;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -48,6 +49,24 @@ public class DatabaseTaskRepositoryTest {
         );
 
         assertEquals(mockTask, expectedTask);
+    }
+
+    @Test
+    public void testFindTaskByIdFail() {
+        String taskId = "a55256a8-1245-4c2c-82da-a7846365079d";
+
+        when(mockJdbcOperations.queryForObject(anyString(), any(RowMapper.class), any()))
+                .thenThrow(EmptyResultDataAccessException.class);
+
+        Task expectedTask = repository.findTaskById(taskId);
+
+        verify(mockJdbcOperations, times(1)).queryForObject (
+                eq("SELECT id, text, status, createdAt, updatedAt FROM task WHERE id = ?"),
+                any(RowMapper.class),
+                eq(taskId)
+        );
+
+        assertNull(expectedTask);
     }
 
     @Test
@@ -112,9 +131,9 @@ public class DatabaseTaskRepositoryTest {
 
         when(mockJdbcOperations.update(anyString(), Mockito.<String>any(), Mockito.<String>any(), anyString(), eq(taskId))).thenReturn(1);
 
-        Task expectedTaskThree = repository.editTaskById(third, taskId);
-        Task expectedTaskTwo = repository.editTaskById(second, taskId);
-        Task expectedTaskOne = repository.editTaskById(first, taskId);
+        int expectedTaskThree = repository.editTaskById(third, taskId);
+        int expectedTaskTwo = repository.editTaskById(second, taskId);
+        int expectedTaskOne = repository.editTaskById(first, taskId);
 
         verify(mockJdbcOperations, times(1)).update(
                 eq("UPDATE task SET status = COALESCE(?, status), text = COALESCE(?, text)," +
@@ -142,12 +161,9 @@ public class DatabaseTaskRepositoryTest {
                 anyString(),
                 eq(taskId)
         );
-        assertEquals("ab", expectedTaskOne.getText());
-        assertNull( expectedTaskOne.getStatus());
-        assertEquals(StatusType.INBOX.toString(), expectedTaskTwo.getStatus());
-        assertNull( expectedTaskTwo.getText());
-        assertEquals("abc", expectedTaskThree.getText());
-        assertEquals(StatusType.DONE.toString(), expectedTaskThree.getStatus());
+        assertEquals(1, expectedTaskOne);
+        assertEquals(1, expectedTaskTwo);
+        assertEquals(1, expectedTaskThree);
     }
 
     @Test
@@ -160,9 +176,9 @@ public class DatabaseTaskRepositoryTest {
         when(mockJdbcOperations.update(anyString(), anyString(), anyString(), anyString(), eq(taskId))).thenReturn(0);
         when(mockJdbcOperations.update(anyString(), anyString(), anyString(), eq(taskId))).thenReturn(0);
 
-        Task expectedTaskThree = repository.editTaskById(third, taskId);
-        Task expectedTaskTwo = repository.editTaskById(second, taskId);
-        Task expectedTaskOne = repository.editTaskById(first, taskId);
+        int expectedTaskThree = repository.editTaskById(third, taskId);
+        int expectedTaskTwo = repository.editTaskById(second, taskId);
+        int expectedTaskOne = repository.editTaskById(first, taskId);
 
         verify(mockJdbcOperations, times(1)).update(
                 eq("UPDATE task SET status = COALESCE(?, status), text = COALESCE(?, text)," +
@@ -190,9 +206,9 @@ public class DatabaseTaskRepositoryTest {
                 anyString(),
                 eq(taskId)
         );
-        assertNull(expectedTaskOne);
-        assertNull(expectedTaskTwo);
-        assertNull(expectedTaskThree);
+        assertEquals(0, expectedTaskOne);
+        assertEquals(0, expectedTaskTwo);
+        assertEquals(0, expectedTaskThree);
     }
 
     @Test
@@ -214,7 +230,24 @@ public class DatabaseTaskRepositoryTest {
 
     @Test
     public void testGetTaskPage() {
-
+        List<Task> mockTasks = mock(List.class);
+        List<Task> mockTasksTwo = mock(List.class);
+        when(mockJdbcOperations.query(
+                eq("SELECT id, text, status, createdat, updatedat FROM task WHERE status = ? ORDER BY" +
+                        " createdat ASC LIMIT ? OFFSET ?"),
+                any(RowMapper.class), anyString(), anyInt(), anyInt())).thenReturn(mockTasks);
+        when(mockJdbcOperations.query(
+                eq("SELECT id, text, status, createdat, updatedat FROM task WHERE status = ? ORDER BY" +
+                        " createdat DESC LIMIT ? OFFSET ?"),
+                any(RowMapper.class), anyString(), anyInt(), anyInt())).thenReturn(mockTasksTwo);
+        assertSame(mockTasks, repository.getTaskPage(StatusType.DONE.toString(), "asc", 1, 20));
+        assertSame(mockTasksTwo, repository.getTaskPage(StatusType.DONE.toString(), "desc", 1, 20));
     }
 
+    @Test
+    public void testGetSize() {
+        when(mockJdbcOperations.queryForObject(eq("SELECT COUNT(*) FROM task WHERE status=?"),
+                eq(Integer.class), anyString())).thenReturn(228);
+        assertEquals(Integer.valueOf(228), repository.getSize(StatusType.DONE.toString()));
+    }
 }

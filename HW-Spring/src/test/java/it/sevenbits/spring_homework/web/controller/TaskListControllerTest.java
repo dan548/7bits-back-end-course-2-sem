@@ -2,24 +2,25 @@ package it.sevenbits.spring_homework.web.controller;
 
 import it.sevenbits.spring_homework.config.constant.StatusType;
 import it.sevenbits.spring_homework.core.errorcodes.TaskResponseErrorCode;
+import it.sevenbits.spring_homework.core.model.GetTasksResponse;
 import it.sevenbits.spring_homework.core.model.Task;
-import it.sevenbits.spring_homework.core.model.response.TaskResponse;
+import it.sevenbits.spring_homework.core.model.service_response.TaskResponse;
 import it.sevenbits.spring_homework.web.service.taskservice.TaskService;
 import it.sevenbits.spring_homework.web.model.requests.AddTaskRequest;
 import it.sevenbits.spring_homework.web.model.requests.UpdateTaskRequest;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.util.List;
-
+import org.springframework.web.util.UriComponentsBuilder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.*;
 
-
+@RunWith(MockitoJUnitRunner.class)
 public class TaskListControllerTest {
 
     @Mock
@@ -30,20 +31,21 @@ public class TaskListControllerTest {
 
     @Test
     public void testGetAllTasks() {
-        List<Task> mockTasks = mock(List.class);
-        when(mockService.getTasksWithStatus(anyString())).thenReturn(mockTasks);
+        GetTasksResponse mockResponse = mock(GetTasksResponse.class);
+        when(mockService.getTasks(anyString(), anyString(), any(Integer.class),
+                any(Integer.class), any(UriComponentsBuilder.class))).thenReturn(mockResponse);
 
-        List<Task> answer = controller.getAllTasks(StatusType.INBOX.toString());
-        verify(mockService, times(1)).getTasksWithStatus(eq(StatusType.INBOX.toString()));
-        assertSame(mockTasks, answer);
+        ResponseEntity<GetTasksResponse> answer = controller.getAllTasks(StatusType.INBOX.toString(), "asc", 1, 10);
+        verify(mockService, times(1)).getTasks(eq(StatusType.INBOX.toString()), eq("asc"),
+                eq(1), eq(10), any(UriComponentsBuilder.class));
+        assertSame(mockResponse, answer.getBody());
     }
 
     @Test
     public void testGetTaskById() {
         String taskId = "a55256a8-1245-4c2c-82da-a7846365079d";
         Task mockTask = mock(Task.class);
-        TaskResponse response = new TaskResponse(mockTask);
-        when(mockService.findTaskById(anyString())).thenReturn(response);
+        when(mockService.findTaskById(anyString())).thenReturn(mockTask);
 
         ResponseEntity<Task> answer = controller.getTaskById(taskId);
         verify(mockService, times(1)).findTaskById(taskId);
@@ -73,9 +75,8 @@ public class TaskListControllerTest {
     @Test
     public void testCreate() {
         Task mockTask = mock(Task.class);
-        TaskResponse response = new TaskResponse(mockTask);
         AddTaskRequest request = new AddTaskRequest("a");
-        when(mockService.create(any(AddTaskRequest.class))).thenReturn(response);
+        when(mockService.create(any(AddTaskRequest.class))).thenReturn(mockTask);
 
         ResponseEntity<Task> answer = controller.create(request);
         verify(mockService, times(1)).create(eq(request));
@@ -94,8 +95,7 @@ public class TaskListControllerTest {
     public void testDeleteTask() {
         String taskId = "a55256a8-1245-4c2c-82da-a7846365079d";
         Task mockTask = mock(Task.class);
-        TaskResponse response = new TaskResponse(mockTask);
-        when(mockService.removeTaskById(anyString())).thenReturn(response);
+        when(mockService.removeTaskById(anyString())).thenReturn(mockTask);
 
         ResponseEntity<Task> answer = controller.deleteTask(taskId);
         verify(mockService, times(1)).removeTaskById(taskId);
@@ -113,10 +113,9 @@ public class TaskListControllerTest {
     @Test
     public void testUpdateTask() {
         String taskId = "a55256a8-1245-4c2c-82da-a7846365079d";
-        Task mockTask = mock(Task.class);
-        TaskResponse response = new TaskResponse(mockTask);
+        TaskResponse mockResponse = mock(TaskResponse.class);
         UpdateTaskRequest request = new UpdateTaskRequest(StatusType.DONE.toString(),"a");
-        when(mockService.editTaskById(any(UpdateTaskRequest.class), anyString())).thenReturn(response);
+        when(mockService.editTaskById(any(UpdateTaskRequest.class), anyString())).thenReturn(mockResponse);
 
         ResponseEntity<Task> answer = controller.updateTask(taskId, request);
         verify(mockService, times(1)).editTaskById(eq(request), eq(taskId));
