@@ -26,7 +26,7 @@ public class DatabaseUsersRepository implements UsersRepository {
 
         try {
             rawUser = jdbcOperations.queryForMap(
-                    "SELECT username, password FROM users u" +
+                    "SELECT id, username, password FROM users u" +
                             " WHERE u.enabled = true AND u.username = ?",
                     username
             );
@@ -36,31 +36,64 @@ public class DatabaseUsersRepository implements UsersRepository {
 
         List<String> authorities = new ArrayList<>();
         jdbcOperations.query(
-                "SELECT username, authority FROM authorities" +
-                        " WHERE username = ?",
+                "SELECT u.id, u.username, a.authority FROM authorities a, users u" +
+                        " WHERE u.username = ? AND a.id = u.id",
                 resultSet -> {
                     String authority = resultSet.getString(AUTHORITY);
                     authorities.add(authority);
                 },
                 username
         );
+        String id = String.valueOf(rawUser.get("id"));
+        String password = String.valueOf(rawUser.get(PASSWORD));
+        return new User(id, username, password, authorities);
+    }
+
+    @Override
+    public User findById(String id) {
+        Map<String, Object> rawUser;
+
+        try {
+            rawUser = jdbcOperations.queryForMap(
+                    "SELECT id, username, password FROM users u" +
+                            " WHERE enabled = true AND id = ?",
+                    id
+            );
+        } catch (IncorrectResultSizeDataAccessException e){
+            return null;
+        }
+
+        List<String> authorities = new ArrayList<>();
+        final String[] name = {null};
+
+        jdbcOperations.query(
+                "SELECT u.id, a.authority, u.username FROM authorities a, users u" +
+                        " WHERE u.id = ? AND u.id = a.id",
+                resultSet -> {
+                    if (name[0] == null) {
+                        name[0] = resultSet.getString(USERNAME);
+                    }
+                    String authority = resultSet.getString(AUTHORITY);
+                    authorities.add(authority);
+                },
+                id
+        );
 
         String password = String.valueOf(rawUser.get(PASSWORD));
-        return new User(username, password, authorities);
+        return new User(id, name[0], password, authorities);
     }
 
     public List<User> findAll() {
         HashMap<String, User> users = new HashMap<>();
 
         for (Map<String, Object> row : jdbcOperations.queryForList(
-                "SELECT username, authority FROM authorities a" +
-                        " WHERE EXISTS" +
-                        " (SELECT * FROM users u WHERE" +
-                        " u.username = a.username AND u.enabled = true)")) {
+                "SELECT u.id, u.username, a.authority FROM authorities a, users u" +
+                        " WHERE u.id = a.id AND u.enabled = true")) {
 
+            String id = String.valueOf(row.get("id"));
             String username = String.valueOf(row.get(USERNAME));
             String newRole = String.valueOf(row.get(AUTHORITY));
-            User user = users.computeIfAbsent(username, name -> new User(name, new ArrayList<>()));
+            User user = users.computeIfAbsent(id, someId -> new User(someId, username, new ArrayList<>()));
             List<String> roles = user.getAuthorities();
             roles.add(newRole);
 

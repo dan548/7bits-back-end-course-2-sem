@@ -12,7 +12,7 @@ public class LoginService {
     private final UsersRepository users;
     private final PasswordEncoder passwordEncoder;
 
-    public LoginService(UsersRepository users, PasswordEncoder passwordEncoder){
+    public LoginService(UsersRepository users, PasswordEncoder passwordEncoder) {
         this.users = users;
         this.passwordEncoder = passwordEncoder;
     }
@@ -30,6 +30,6 @@ public class LoginService {
             throw new LoginFailedException("Wrong password");
         }
 
-        return new User(user.getUsername(), user.getAuthorities());
+        return new User(user.getId(), user.getUsername(), user.getAuthorities());
     }
 }

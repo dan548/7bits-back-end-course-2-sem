@@ -42,7 +42,7 @@ public class JsonWebTokenService implements JwtTokenService {
         Claims claims = Jwts.claims()
                 .setIssuer(settings.getTokenIssuer())
                 .setIssuedAt(Date.from(now))
-                .setSubject(user.getUsername())
+                .setSubject(user.getId())
                 .setExpiration(Date.from(now.plus(settings.getTokenExpiredIn())));
         claims.put(AUTHORITIES, user.getAuthorities());
 
@@ -63,13 +63,13 @@ public class JsonWebTokenService implements JwtTokenService {
                 .setSigningKey(settings.getTokenSigningKey())
                 .parseClaimsJws(token);
 
-        String subject = claims.getBody().getSubject();
+        String id = claims.getBody().getSubject();
         List<String> tokenAuthorities = claims.getBody().get(AUTHORITIES, List.class);
 
         List<GrantedAuthority> authorities = tokenAuthorities.stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
 
-        return new AuthenticatedJwtToken(subject, authorities);
+        return new AuthenticatedJwtToken(id, authorities);
     }
 }

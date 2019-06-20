@@ -10,11 +10,11 @@ import java.util.Collection;
  */
 class AuthenticatedJwtToken extends AbstractAuthenticationToken {
 
-    private final String subject;
+    private final String id;
 
-    AuthenticatedJwtToken(final String subject, final Collection<GrantedAuthority> authorities) {
+    AuthenticatedJwtToken(final String id, final Collection<GrantedAuthority> authorities) {
         super(authorities);
-        this.subject = subject;
+        this.id = id;
         setAuthenticated(true);
     }
 
@@ -25,7 +25,7 @@ class AuthenticatedJwtToken extends AbstractAuthenticationToken {
 
     @Override
     public Object getPrincipal() {
-        return subject;
+        return id;
     }
 
 }

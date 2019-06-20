@@ -1,5 +1,6 @@
 package it.sevenbits.spring_homework.web.controller;
 
+import it.sevenbits.spring_homework.core.repository.users.UsersRepository;
 import it.sevenbits.spring_homework.web.model.users.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -13,11 +14,23 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/whoami")
 public class WhoAmIController {
 
+    private final UsersRepository repo;
+
+    public WhoAmIController(final UsersRepository repo) {
+        this.repo = repo;
+    }
+
     @GetMapping
     @ResponseBody
     public ResponseEntity<User> get() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return ResponseEntity.ok(new User(authentication));
+        User user = new User(authentication);
+        if (user.getId() != null) {
+            user = repo.findById(user.getId());
+        } else {
+            user = repo.findByUserName(user.getUsername());
+        }
+        return ResponseEntity.ok(user);
     }
 
 }
