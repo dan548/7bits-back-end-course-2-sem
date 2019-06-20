@@ -1,4 +1,4 @@
-package it.sevenbits.spring_homework.core.repository;
+package it.sevenbits.spring_homework.core.repository.tasks;
 
 import it.sevenbits.spring_homework.core.model.Task;
 import it.sevenbits.spring_homework.web.model.requests.AddTaskRequest;

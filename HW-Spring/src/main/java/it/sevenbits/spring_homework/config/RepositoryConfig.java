@@ -1,8 +1,10 @@
 package it.sevenbits.spring_homework.config;
 
+import it.sevenbits.spring_homework.core.repository.users.UsersRepository;
+import it.sevenbits.spring_homework.core.repository.users.database.DatabaseUsersRepository;
 import it.sevenbits.spring_homework.core.service.dategetter.DateGetter;
-import it.sevenbits.spring_homework.core.repository.TaskRepository;
-import it.sevenbits.spring_homework.core.repository.database.DatabaseTaskRepository;
+import it.sevenbits.spring_homework.core.repository.tasks.TaskRepository;
+import it.sevenbits.spring_homework.core.repository.tasks.database.DatabaseTaskRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,10 +27,17 @@ public class RepositoryConfig {
      * @return specific task repository implementation
      */
     @Bean
-    @Qualifier("repository")
+    @Qualifier("taskRepository")
     public TaskRepository taskRepository(
             @Qualifier("tasksJdbcOperations") final JdbcOperations jdbcOperations,
             @Qualifier("dateGetter") final DateGetter dateGetter) {
         return new DatabaseTaskRepository(jdbcOperations, dateGetter);
+    }
+
+    @Bean
+    @Qualifier("usersRepository")
+    public UsersRepository usersRepository(
+            @Qualifier("tasksJdbcOperations") final JdbcOperations jdbcOperations) {
+        return new DatabaseUsersRepository(jdbcOperations);
     }
 }

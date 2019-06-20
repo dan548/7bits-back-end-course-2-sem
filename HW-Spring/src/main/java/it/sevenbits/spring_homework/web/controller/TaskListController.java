@@ -4,7 +4,7 @@ import it.sevenbits.spring_homework.config.constant.Regexps;
 import it.sevenbits.spring_homework.core.model.GetTasksResponse;
 import it.sevenbits.spring_homework.core.model.Task;
 import it.sevenbits.spring_homework.core.model.service_response.TaskResponse;
-import it.sevenbits.spring_homework.web.service.taskservice.TaskService;
+import it.sevenbits.spring_homework.web.service.TaskService;
 import it.sevenbits.spring_homework.web.model.requests.AddTaskRequest;
 import it.sevenbits.spring_homework.web.model.requests.UpdateTaskRequest;
 

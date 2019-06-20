@@ -2,6 +2,7 @@ package it.sevenbits.spring_homework.core.repository.database;
 
 import it.sevenbits.spring_homework.config.constant.StatusType;
 import it.sevenbits.spring_homework.core.model.Task;
+import it.sevenbits.spring_homework.core.repository.tasks.database.DatabaseTaskRepository;
 import it.sevenbits.spring_homework.core.service.dategetter.DateGetter;
 import it.sevenbits.spring_homework.web.model.requests.AddTaskRequest;
 import it.sevenbits.spring_homework.web.model.requests.UpdateTaskRequest;
