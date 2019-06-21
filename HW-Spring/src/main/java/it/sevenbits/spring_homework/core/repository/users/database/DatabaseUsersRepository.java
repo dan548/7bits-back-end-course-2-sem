@@ -1,6 +1,7 @@
 package it.sevenbits.spring_homework.core.repository.users.database;
 
 import it.sevenbits.spring_homework.core.repository.users.UsersRepository;
+import it.sevenbits.spring_homework.web.model.users.UpdateUserRequest;
 import it.sevenbits.spring_homework.web.model.users.User;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcOperations;
@@ -100,5 +101,22 @@ public class DatabaseUsersRepository implements UsersRepository {
         }
 
         return new ArrayList<>(users.values());
+    }
+
+    @Override
+    public int editUserById(final String id, final UpdateUserRequest request) {
+        int rowStatus = jdbcOperations.update("UPDATE users SET enabled = COALESCE(?, enabled) WHERE id = ?",
+                request.getStatus(), id);
+        List<String> list = request.getAuthorities();
+        if (list != null && list.size() != 0) {
+            int auth = jdbcOperations.update("DELETE FROM authorities WHERE id = ?", id);
+            if (auth == 0) {
+                return 0;
+            }
+            for (String authority : list) {
+                jdbcOperations.update("INSERT INTO authorities (id, authority) VALUES (?, ?)", id, authority);
+            }
+        }
+        return rowStatus;
     }
 }
