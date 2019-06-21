@@ -1,8 +1,10 @@
 # **Java Spring Task Manager**
 Backend part of the task managing server.
+
 ###**Getting Started**
 
 Install software that used in this application
+
 ####**Prerequisites**
 
 To run this application you need to install:
@@ -11,13 +13,14 @@ To run this application you need to install:
     Apache Maven
     PostgreSQL 9.6 and above
 
+
 ###**Installation**
 
 Here is the instruction to run this server on your machine.
 
 * Firstly, clone this repository
 
-      $ git clone https://github.com/victimoftrap/todo-taskmanager.git
+      $ git clone https://github.com/dan548/7bits-back-end-course-2-sem.git
 
 * Create your database
 
@@ -37,6 +40,7 @@ Here is the instruction to run this server on your machine.
       java -jar spring_homework-1.0-SNAPSHOT.jar
 
 Now this server will start on port 8080
+
 ####**Usage**
 The full API is available via link down below.
 * [API] [1]
