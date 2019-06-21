@@ -4,8 +4,8 @@ import it.sevenbits.spring_homework.config.constant.StatusType;
 import it.sevenbits.spring_homework.core.service.dategetter.DateGetter;
 import it.sevenbits.spring_homework.core.model.Task;
 import it.sevenbits.spring_homework.core.repository.tasks.TaskRepository;
-import it.sevenbits.spring_homework.web.model.requests.AddTaskRequest;
-import it.sevenbits.spring_homework.web.model.requests.UpdateTaskRequest;
+import it.sevenbits.spring_homework.web.model.taskrequests.AddTaskRequest;
+import it.sevenbits.spring_homework.web.model.taskrequests.UpdateTaskRequest;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcOperations;
 

@@ -8,8 +8,8 @@ import it.sevenbits.spring_homework.core.model.Task;
 import it.sevenbits.spring_homework.core.model.TasksPaginationMeta;
 import it.sevenbits.spring_homework.core.model.service_response.TaskResponse;
 import it.sevenbits.spring_homework.core.repository.tasks.TaskRepository;
-import it.sevenbits.spring_homework.web.model.requests.AddTaskRequest;
-import it.sevenbits.spring_homework.web.model.requests.UpdateTaskRequest;
+import it.sevenbits.spring_homework.web.model.taskrequests.AddTaskRequest;
+import it.sevenbits.spring_homework.web.model.taskrequests.UpdateTaskRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 

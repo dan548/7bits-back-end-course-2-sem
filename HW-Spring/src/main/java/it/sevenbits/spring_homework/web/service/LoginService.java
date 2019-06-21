@@ -1,7 +1,7 @@
 package it.sevenbits.spring_homework.web.service;
 
 import it.sevenbits.spring_homework.core.repository.users.UsersRepository;
-import it.sevenbits.spring_homework.web.model.users.Login;
+import it.sevenbits.spring_homework.web.model.users.SignInRequest;
 import it.sevenbits.spring_homework.web.model.users.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,16 +17,16 @@ public class LoginService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User login(Login login) {
-        User user = users.findByUserName(login.getLogin());
+    public User login(SignInRequest signInRequest) {
+        User user = users.findByUserName(signInRequest.getLogin());
 
         if (user == null) {
             throw new LoginFailedException(
-                    "User '" + login.getLogin() + "' not found"
+                    "User '" + signInRequest.getLogin() + "' not found"
             );
         }
 
-        if (!passwordEncoder.matches(login.getPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(signInRequest.getPassword(), user.getPassword())) {
             throw new LoginFailedException("Wrong password");
         }
 

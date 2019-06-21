@@ -1,6 +1,6 @@
 package it.sevenbits.spring_homework.web.controller;
 
-import it.sevenbits.spring_homework.web.model.users.Login;
+import it.sevenbits.spring_homework.web.model.users.SignInRequest;
 import it.sevenbits.spring_homework.web.model.users.User;
 import it.sevenbits.spring_homework.web.security.JwtTokenService;
 import it.sevenbits.spring_homework.web.service.LoginService;
@@ -26,8 +26,8 @@ public class CookieSignInController {
 
     @PostMapping
     @ResponseBody
-    public ResponseEntity create(@RequestBody Login login, HttpServletResponse response) {
-        User user = loginService.login(login);
+    public ResponseEntity create(@RequestBody SignInRequest signInRequest, HttpServletResponse response) {
+        User user = loginService.login(signInRequest);
         String token = tokenService.createToken(user);
 
         Cookie cookie = new Cookie("accessToken", token);

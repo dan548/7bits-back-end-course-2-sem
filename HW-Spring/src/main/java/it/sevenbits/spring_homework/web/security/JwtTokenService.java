@@ -19,7 +19,7 @@ public interface JwtTokenService {
     Authentication parseToken(String token);
 
     /**
-     * Creates new Token for user.
+     * Creates new SignInResponse for user.
      * @param user contains User to be represented as token
      * @return signed token
      */

@@ -1,18 +1,18 @@
 package it.sevenbits.spring_homework.web.model.users;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class SignInResponse {
 
-    private String token;
+    private final String token;
 
-    public SignInResponse(String token) {
+    @JsonCreator
+    public SignInResponse(final @JsonProperty("token") String token) {
         this.token = token;
     }
 
     public String getToken() {
         return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
     }
 }

@@ -1,28 +1,23 @@
 package it.sevenbits.spring_homework.web.model.users;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class SignInRequest {
+    private final String login;
+    private final String password;
 
-    private String username;
-    private String password;
-
-    public SignInRequest(String username, String password) {
-        this.username = username;
+    @JsonCreator
+    public SignInRequest(@JsonProperty("username") String login, @JsonProperty("password") String password) {
+        this.login = login;
         this.password = password;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
+    public String getLogin() {
+        return login;
     }
 
     public String getPassword() {
         return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 }

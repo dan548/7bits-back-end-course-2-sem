@@ -28,11 +28,11 @@ public class UsersController {
         return ResponseEntity.ok(usersRepository.findAll());
     }
 
-    @GetMapping(value = "/{username}")
+    @GetMapping(value = "/{id}")
     @ResponseBody
-    public ResponseEntity<User> getUserInfo(final @PathVariable("username") String username) {
+    public ResponseEntity<User> getUserInfo(final @PathVariable("id") String id) {
         return Optional
-                .ofNullable(usersRepository.findByUserName(username))
+                .ofNullable(usersRepository.findById(id))
                 .map(user -> ResponseEntity.ok().body(user))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }

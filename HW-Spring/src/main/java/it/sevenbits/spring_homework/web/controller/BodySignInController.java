@@ -1,7 +1,7 @@
 package it.sevenbits.spring_homework.web.controller;
 
-import it.sevenbits.spring_homework.web.model.token.Token;
-import it.sevenbits.spring_homework.web.model.users.Login;
+import it.sevenbits.spring_homework.web.model.users.SignInResponse;
+import it.sevenbits.spring_homework.web.model.users.SignInRequest;
 import it.sevenbits.spring_homework.web.model.users.User;
 import it.sevenbits.spring_homework.web.security.JwtTokenService;
 import it.sevenbits.spring_homework.web.service.LoginService;
@@ -23,9 +23,9 @@ public class BodySignInController {
 
     @PostMapping
     @ResponseBody
-    public Token create(@RequestBody Login login) {
-        User user = loginService.login(login);
+    public SignInResponse create(@RequestBody SignInRequest signInRequest) {
+        User user = loginService.login(signInRequest);
         String token = tokenService.createToken(user);
-        return new Token(token);
+        return new SignInResponse(token);
     }
 }
