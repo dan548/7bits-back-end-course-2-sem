@@ -1,15 +1,13 @@
 package it.sevenbits.spring_homework.core.repository.users.database;
 
 import it.sevenbits.spring_homework.core.repository.users.UsersRepository;
+import it.sevenbits.spring_homework.web.model.users.SignUpRequest;
 import it.sevenbits.spring_homework.web.model.users.UpdateUserRequest;
 import it.sevenbits.spring_homework.web.model.users.User;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcOperations;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DatabaseUsersRepository implements UsersRepository {
 
@@ -20,6 +18,20 @@ public class DatabaseUsersRepository implements UsersRepository {
 
     public DatabaseUsersRepository(final JdbcOperations jdbcOperations) {
         this.jdbcOperations = jdbcOperations;
+    }
+
+    @Override
+    public boolean checkUsername(String username) {
+        try {
+            jdbcOperations.queryForMap(
+                    "SELECT id FROM users u" +
+                            " WHERE u.username = ?",
+                    username
+            );
+            return true;
+        } catch (IncorrectResultSizeDataAccessException e) {
+            return false;
+        }
     }
 
     public User findByUserName(String username) {
@@ -118,5 +130,14 @@ public class DatabaseUsersRepository implements UsersRepository {
             }
         }
         return rowStatus;
+    }
+
+    @Override
+    public int addUser(final SignUpRequest request) {
+        String id = UUID.randomUUID().toString();
+        jdbcOperations.update("INSERT INTO users (id, username, password, enabled) VALUES (?, ?, ?, TRUE)",
+                id, request.getUsername(), request.getPassword());
+        return jdbcOperations.update("INSERT INTO authorities (id, authority) VALUES (?, ?)",
+                id, "USER");
     }
 }

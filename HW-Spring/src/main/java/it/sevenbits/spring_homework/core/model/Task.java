@@ -1,5 +1,7 @@
 package it.sevenbits.spring_homework.core.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Task model.
  * @since 1.0
@@ -14,6 +16,9 @@ public class Task {
     private String createdAt;
     private String updatedAt;
 
+    @JsonIgnore
+    private String owner;
+
     /**
      * Constructs a task.
      * @param id id field of the task
@@ -22,12 +27,13 @@ public class Task {
      * @param createdAt date when the task was created
      * @param updatedAt date when the task was last updated
      */
-    public Task(final String id, final String text, final String status, final String createdAt, final String updatedAt) {
+    public Task(final String id, final String text, final String status, final String createdAt, final String updatedAt, final String owner) {
         this.id = id;
         this.text = text;
         this.status = status;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.owner = owner;
     }
 
     public String getId() {
@@ -60,5 +66,13 @@ public class Task {
 
     public void setUpdatedAt(final String updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 }

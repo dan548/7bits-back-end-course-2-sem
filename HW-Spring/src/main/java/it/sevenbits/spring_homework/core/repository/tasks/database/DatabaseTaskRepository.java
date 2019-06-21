@@ -6,8 +6,10 @@ import it.sevenbits.spring_homework.core.model.Task;
 import it.sevenbits.spring_homework.core.repository.tasks.TaskRepository;
 import it.sevenbits.spring_homework.web.model.taskrequests.AddTaskRequest;
 import it.sevenbits.spring_homework.web.model.taskrequests.UpdateTaskRequest;
+import it.sevenbits.spring_homework.web.model.users.User;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -38,15 +40,17 @@ public class DatabaseTaskRepository implements TaskRepository {
         String status = resultSet.getString("status");
         String createdAt = resultSet.getString("createdAt");
         String updatedAt = resultSet.getString("updatedAt");
-        return new Task(id, text, status, createdAt, updatedAt);
+        String owner = resultSet.getString("owner");
+        return new Task(id, text, status, createdAt, updatedAt, owner);
     }
 
     @Override
     public Task findTaskById(final String givenId) {
+        User user = new User(SecurityContextHolder.getContext().getAuthentication());
         try {
             return jdbcOperations.queryForObject(
-                    "SELECT id, text, status, createdAt, updatedAt FROM task WHERE id = ?",
-                    DatabaseTaskRepository::mapRow, givenId);
+                    "SELECT id, text, status, createdAt, updatedAt, owner FROM task WHERE id = ? AND owner = ?",
+                    DatabaseTaskRepository::mapRow, givenId, user.getId());
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
@@ -55,9 +59,11 @@ public class DatabaseTaskRepository implements TaskRepository {
     @Override
     public Task create(final AddTaskRequest request) {
         String date = dateGetter.getDate();
-        Task newTask = new Task(UUID.randomUUID().toString(), request.getText(), StatusType.INBOX.toString(), date, date);
-        jdbcOperations.update("INSERT INTO task (id, text, status, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?)",
-                newTask.getId(), newTask.getText(), newTask.getStatus(), newTask.getCreatedAt(), newTask.getUpdatedAt());
+        User user = new User(SecurityContextHolder.getContext().getAuthentication());
+        Task newTask = new Task(UUID.randomUUID().toString(), request.getText(), StatusType.INBOX.toString(), date, date, user.getId());
+        jdbcOperations.update("INSERT INTO task (id, text, status, createdAt, updatedAt, owner) VALUES (?, ?, ?, ?, ?, ?)",
+                newTask.getId(), newTask.getText(), newTask.getStatus(),
+                newTask.getCreatedAt(), newTask.getUpdatedAt(), newTask.getOwner());
 
         return newTask;
     }
@@ -73,40 +79,49 @@ public class DatabaseTaskRepository implements TaskRepository {
 
     @Override
     public List<Task> getAllTasks() {
+        User user = new User(SecurityContextHolder.getContext().getAuthentication());
         return jdbcOperations.query(
-                "SELECT id, text, status, createdat, updatedat FROM task",
-                DatabaseTaskRepository::mapRow);
+                "SELECT id, text, status, createdat, updatedat, owner FROM task WHERE owner = ?",
+                DatabaseTaskRepository::mapRow, user.getId());
     }
 
     @Override
     public int editTaskById(final UpdateTaskRequest request, final String id) {
         String date = dateGetter.getDate();
+        User user = new User(SecurityContextHolder.getContext().getAuthentication());
         return jdbcOperations.update("UPDATE task SET status = COALESCE(?, status), text = COALESCE(?, text), " +
-                        "updatedat = ? WHERE id = ?", request.getStatus(), request.getText(), date, id);
+                        "updatedat = ? WHERE id = ? AND owner = ?", request.getStatus(),
+                request.getText(), date, id, user.getId());
     }
 
     @Override
     public List<Task> getTasksWithStatus(final String status) {
+        User user = new User(SecurityContextHolder.getContext().getAuthentication());
         return jdbcOperations.query(
-                "SELECT id, text, status, createdat, updatedat FROM task WHERE status=?",
-                DatabaseTaskRepository::mapRow, status);
+                "SELECT id, text, status, createdat, updatedat, owner FROM task WHERE status=? AND owner = ?",
+                DatabaseTaskRepository::mapRow, status, user.getId());
     }
 
     @Override
     public List<Task> getTaskPage(final String status, final String order, final int page, final int size) {
+        User user = new User(SecurityContextHolder.getContext().getAuthentication());
         if ("asc".equals(order)) {
             return jdbcOperations.query(
-                    "SELECT id, text, status, createdat, updatedat FROM task WHERE status = ? ORDER BY createdat ASC LIMIT ? OFFSET ?",
-                    DatabaseTaskRepository::mapRow, status, size, (page - 1) * size);
+                    "SELECT id, text, status, createdat, updatedat, owner FROM task WHERE status = ? AND owner = ? " +
+                            "ORDER BY createdat ASC LIMIT ? OFFSET ?",
+                    DatabaseTaskRepository::mapRow, status, user.getId(), size, (page - 1) * size);
         } else {
             return jdbcOperations.query(
-                    "SELECT id, text, status, createdat, updatedat FROM task WHERE status = ? ORDER BY createdat DESC LIMIT ? OFFSET ?",
-                    DatabaseTaskRepository::mapRow, status, size, (page - 1) * size);
+                    "SELECT id, text, status, createdat, updatedat, owner FROM task WHERE status = ? AND owner = ? " +
+                            "ORDER BY createdat DESC LIMIT ? OFFSET ?",
+                    DatabaseTaskRepository::mapRow, status, user.getId(), size, (page - 1) * size);
         }
     }
 
     @Override
     public Integer getSize(final String status) {
-        return jdbcOperations.queryForObject("SELECT COUNT(*) FROM task WHERE status=?", Integer.class, status);
+        User user = new User(SecurityContextHolder.getContext().getAuthentication());
+        return jdbcOperations.queryForObject("SELECT COUNT(*) FROM task WHERE status=? AND owner = ?",
+                Integer.class, status, user.getId());
     }
 }

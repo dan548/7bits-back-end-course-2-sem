@@ -1,6 +1,5 @@
 package it.sevenbits.spring_homework.web.controller;
 
-import it.sevenbits.spring_homework.config.constant.Regexps;
 import it.sevenbits.spring_homework.core.repository.users.UsersRepository;
 import it.sevenbits.spring_homework.web.model.users.UpdateUserRequest;
 import it.sevenbits.spring_homework.web.model.users.User;

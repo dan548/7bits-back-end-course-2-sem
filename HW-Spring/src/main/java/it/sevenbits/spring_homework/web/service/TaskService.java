@@ -10,6 +10,7 @@ import it.sevenbits.spring_homework.core.model.service_response.TaskResponse;
 import it.sevenbits.spring_homework.core.repository.tasks.TaskRepository;
 import it.sevenbits.spring_homework.web.model.taskrequests.AddTaskRequest;
 import it.sevenbits.spring_homework.web.model.taskrequests.UpdateTaskRequest;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -20,15 +21,18 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class TaskService {
 
     private final TaskRepository taskRepository;
-    private final int minSize = 10;
-    private final int maxSize = 50;
+    private final int minSize;
+    private final int maxSize;
 
     /**
      * Creates a task service.
      * @param taskRepository repository to be used by service
      */
-    public TaskService(final TaskRepository taskRepository) {
+    public TaskService(final TaskRepository taskRepository, @Value("${parameters.min-page-size}") final int minSize,
+                       @Value("${parameters.max-page-size}") final int maxSize) {
         this.taskRepository = taskRepository;
+        this.minSize = minSize;
+        this.maxSize = maxSize;
     }
 
     /**

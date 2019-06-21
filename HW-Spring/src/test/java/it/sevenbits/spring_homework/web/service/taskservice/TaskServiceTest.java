@@ -31,7 +31,7 @@ public class TaskServiceTest {
     @Before
     public void setup() {
         mockRepository = mock(TaskRepository.class);
-        service = new TaskService(mockRepository);
+        service = new TaskService(mockRepository, 10, 50);
     }
 
     @Test

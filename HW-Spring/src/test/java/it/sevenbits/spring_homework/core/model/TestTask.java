@@ -13,7 +13,7 @@ public class TestTask {
 
     @Before
     public void setup() {
-        task = new Task("a", "b", "c", "d", "e");
+        task = new Task("a", "b", "c", "d", "e", "f");
     }
 
     @Test
