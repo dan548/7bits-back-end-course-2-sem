@@ -7,11 +7,19 @@ import it.sevenbits.spring_homework.web.model.users.UsersServiceResponse;
 import it.sevenbits.spring_homework.web.service.UsersService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Controller to handle getting or updating users.
+ */
 @Controller
 @RequestMapping("/users")
 public class UsersController {
@@ -19,6 +27,11 @@ public class UsersController {
     private final UsersRepository usersRepository;
     private final UsersService service;
 
+    /**
+     * Constructs controller.
+     * @param usersRepository repository
+     * @param service service
+     */
     public UsersController(final UsersRepository usersRepository, final UsersService service) {
         this.usersRepository = usersRepository;
         this.service = service;
@@ -30,6 +43,11 @@ public class UsersController {
         return ResponseEntity.ok(usersRepository.findAll());
     }
 
+    /**
+     * Gets user info by id.
+     * @param id user id
+     * @return user
+     */
     @GetMapping(value = "/{id}")
     @ResponseBody
     public ResponseEntity<User> getUserInfo(final @PathVariable("id") String id) {
@@ -39,6 +57,12 @@ public class UsersController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    /**
+     * Updates user info by id.
+     * @param id user id
+     * @param request fields to update
+     * @return response code
+     */
     @PatchMapping(value = "/{id}")
     @ResponseBody
     public ResponseEntity<User> updateUser(final @PathVariable("id") String id, final @RequestBody UpdateUserRequest request) {

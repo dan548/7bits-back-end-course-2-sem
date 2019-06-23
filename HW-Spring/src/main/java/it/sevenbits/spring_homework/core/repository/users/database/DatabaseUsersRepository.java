@@ -7,21 +7,29 @@ import it.sevenbits.spring_homework.web.model.users.User;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcOperations;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
+/**
+ * User database repository
+ */
 public class DatabaseUsersRepository implements UsersRepository {
 
     private final JdbcOperations jdbcOperations;
-    private final String AUTHORITY = "authority";
-    private final String USERNAME = "username";
-    private final String PASSWORD = "password";
 
+    /**
+     * Constructs repository
+     * @param jdbcOperations JDBC
+     */
     public DatabaseUsersRepository(final JdbcOperations jdbcOperations) {
         this.jdbcOperations = jdbcOperations;
     }
 
     @Override
-    public boolean checkUsername(String username) {
+    public boolean checkUsername(final String username) {
         try {
             jdbcOperations.queryForMap(
                     "SELECT id FROM users u" +
@@ -34,7 +42,12 @@ public class DatabaseUsersRepository implements UsersRepository {
         }
     }
 
-    public User findByUserName(String username) {
+    /**
+     * Gets user by name
+     * @param username login
+     * @return user
+     */
+    public User findByUserName(final String username) {
         Map<String, Object> rawUser;
 
         try {
@@ -43,27 +56,27 @@ public class DatabaseUsersRepository implements UsersRepository {
                             " WHERE u.enabled = true AND u.username = ?",
                     username
             );
-        } catch (IncorrectResultSizeDataAccessException e){
+        } catch (IncorrectResultSizeDataAccessException e) {
             return null;
         }
 
         List<String> authorities = new ArrayList<>();
         jdbcOperations.query(
-                "SELECT u.id, u.username, a.authority FROM authorities a, users u" +
+                "SELECT a.authority FROM authorities a, users u" +
                         " WHERE u.username = ? AND a.id = u.id",
                 resultSet -> {
-                    String authority = resultSet.getString(AUTHORITY);
+                    String authority = resultSet.getString("authority");
                     authorities.add(authority);
                 },
                 username
         );
         String id = String.valueOf(rawUser.get("id"));
-        String password = String.valueOf(rawUser.get(PASSWORD));
+        String password = String.valueOf(rawUser.get("password"));
         return new User(id, username, password, authorities);
     }
 
     @Override
-    public User findById(String id) {
+    public User findById(final String id) {
         Map<String, Object> rawUser;
 
         try {
@@ -72,7 +85,7 @@ public class DatabaseUsersRepository implements UsersRepository {
                             " WHERE enabled = true AND id = ?",
                     id
             );
-        } catch (IncorrectResultSizeDataAccessException e){
+        } catch (IncorrectResultSizeDataAccessException e) {
             return null;
         }
 
@@ -84,18 +97,22 @@ public class DatabaseUsersRepository implements UsersRepository {
                         " WHERE u.id = ? AND u.id = a.id",
                 resultSet -> {
                     if (name[0] == null) {
-                        name[0] = resultSet.getString(USERNAME);
+                        name[0] = resultSet.getString("username");
                     }
-                    String authority = resultSet.getString(AUTHORITY);
+                    String authority = resultSet.getString("authority");
                     authorities.add(authority);
                 },
                 id
         );
 
-        String password = String.valueOf(rawUser.get(PASSWORD));
+        String password = String.valueOf(rawUser.get("password"));
         return new User(id, name[0], password, authorities);
     }
 
+    /**
+     * Gets list of all users
+     * @return list of users
+     */
     public List<User> findAll() {
         HashMap<String, User> users = new HashMap<>();
 
@@ -104,8 +121,8 @@ public class DatabaseUsersRepository implements UsersRepository {
                         " WHERE u.id = a.id AND u.enabled = true")) {
 
             String id = String.valueOf(row.get("id"));
-            String username = String.valueOf(row.get(USERNAME));
-            String newRole = String.valueOf(row.get(AUTHORITY));
+            String username = String.valueOf(row.get("username"));
+            String newRole = String.valueOf(row.get("authority"));
             User user = users.computeIfAbsent(id, someId -> new User(someId, username, new ArrayList<>()));
             List<String> roles = user.getAuthorities();
             roles.add(newRole);

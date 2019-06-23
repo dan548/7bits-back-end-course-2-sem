@@ -27,6 +27,8 @@ public class TaskService {
     /**
      * Creates a task service.
      * @param taskRepository repository to be used by service
+     * @param maxSize maximum page size
+     * @param minSize minimum page size
      */
     public TaskService(final TaskRepository taskRepository, @Value("${parameters.min-page-size}") final int minSize,
                        @Value("${parameters.max-page-size}") final int maxSize) {

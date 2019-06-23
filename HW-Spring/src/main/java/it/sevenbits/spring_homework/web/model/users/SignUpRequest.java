@@ -1,11 +1,19 @@
 package it.sevenbits.spring_homework.web.model.users;
 
+/**
+ * Request model for signing up.
+ */
 public class SignUpRequest {
 
-    private String username;
-    private String password;
+    private final String username;
+    private final String password;
 
-    public SignUpRequest(String username, String password) {
+    /**
+     * Constructs request.
+     * @param username login
+     * @param password user's password
+     */
+    public SignUpRequest(final String username, final String password) {
         this.username = username;
         this.password = password;
     }
@@ -14,16 +22,7 @@ public class SignUpRequest {
         return username;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     public String getPassword() {
         return password;
     }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
 }

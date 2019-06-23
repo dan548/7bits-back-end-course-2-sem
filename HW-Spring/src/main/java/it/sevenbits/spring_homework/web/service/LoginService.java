@@ -6,18 +6,31 @@ import it.sevenbits.spring_homework.web.model.users.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+/**
+ *
+ */
 @Service
 public class LoginService {
 
     private final UsersRepository users;
     private final PasswordEncoder passwordEncoder;
 
-    public LoginService(UsersRepository users, PasswordEncoder passwordEncoder) {
+    /**
+     *
+     * @param users repository
+     * @param passwordEncoder encodes password to database representation
+     */
+    public LoginService(final UsersRepository users, final PasswordEncoder passwordEncoder) {
         this.users = users;
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User login(SignInRequest signInRequest) {
+    /**
+     *
+     * @param signInRequest login request
+     * @return user
+     */
+    public User login(final SignInRequest signInRequest) {
         User user = users.findByUserName(signInRequest.getLogin());
 
         if (user == null) {

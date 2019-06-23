@@ -27,8 +27,11 @@ public class JsonWebTokenService implements JwtTokenService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final JwtSettings settings;
-    private final String AUTHORITIES = "authorities";
 
+    /**
+     * Constructs specific JWT service
+     * @param settings JWT settings
+     */
     public JsonWebTokenService(final JwtSettings settings) {
         this.settings = settings;
     }
@@ -44,7 +47,7 @@ public class JsonWebTokenService implements JwtTokenService {
                 .setIssuedAt(Date.from(now))
                 .setSubject(user.getId())
                 .setExpiration(Date.from(now.plus(settings.getTokenExpiredIn())));
-        claims.put(AUTHORITIES, user.getAuthorities());
+        claims.put("authorities", user.getAuthorities());
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -58,13 +61,13 @@ public class JsonWebTokenService implements JwtTokenService {
     }
 
     @Override
-    public Authentication parseToken(String token) {
+    public Authentication parseToken(final String token) {
         Jws<Claims> claims = Jwts.parser()
                 .setSigningKey(settings.getTokenSigningKey())
                 .parseClaimsJws(token);
 
         String id = claims.getBody().getSubject();
-        List<String> tokenAuthorities = claims.getBody().get(AUTHORITIES, List.class);
+        List<String> tokenAuthorities = claims.getBody().get("authorities", List.class);
 
         List<GrantedAuthority> authorities = tokenAuthorities.stream()
                 .map(SimpleGrantedAuthority::new)

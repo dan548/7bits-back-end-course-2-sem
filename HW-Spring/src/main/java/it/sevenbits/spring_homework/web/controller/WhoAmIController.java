@@ -10,16 +10,27 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+/**
+ * "Who-am-I" page controller.
+ */
 @Controller
 @RequestMapping("/whoami")
 public class WhoAmIController {
 
     private final UsersRepository repo;
 
+    /**
+     * Constructs controller from repository.
+     * @param repo user repository
+     */
     public WhoAmIController(final UsersRepository repo) {
         this.repo = repo;
     }
 
+    /**
+     * Gets current authenticated user.
+     * @return user
+     */
     @GetMapping
     @ResponseBody
     public ResponseEntity<User> get() {

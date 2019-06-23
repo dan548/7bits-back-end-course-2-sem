@@ -34,6 +34,11 @@ public class RepositoryConfig {
         return new DatabaseTaskRepository(jdbcOperations, dateGetter);
     }
 
+    /**
+     * Assigns specific user repository
+     * @param jdbcOperations JDBC
+     * @return specific repository
+     */
     @Bean
     @Qualifier("usersRepository")
     public UsersRepository usersRepository(

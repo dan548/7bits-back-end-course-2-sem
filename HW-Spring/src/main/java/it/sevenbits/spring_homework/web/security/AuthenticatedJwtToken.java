@@ -12,6 +12,11 @@ class AuthenticatedJwtToken extends AbstractAuthenticationToken {
 
     private final String id;
 
+    /**
+     * Constructs authenticated token.
+     * @param id user id
+     * @param authorities user's authorities
+     */
     AuthenticatedJwtToken(final String id, final Collection<GrantedAuthority> authorities) {
         super(authorities);
         this.id = id;

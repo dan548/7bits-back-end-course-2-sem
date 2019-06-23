@@ -5,11 +5,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
+/**
+ * User updating request.
+ */
 public class UpdateUserRequest {
 
     private final Boolean status;
     private final List<String> authorities;
 
+    /**
+     * Constructs request.
+     * @param status new enable status
+     * @param authorities new user's authorities
+     */
     @JsonCreator
     public UpdateUserRequest(final @JsonProperty("status") Boolean status,
                              final @JsonProperty("authorities") List<String> authorities) {

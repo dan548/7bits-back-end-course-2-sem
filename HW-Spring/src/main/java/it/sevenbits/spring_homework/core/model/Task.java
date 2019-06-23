@@ -26,8 +26,10 @@ public class Task {
      * @param status status field of the task
      * @param createdAt date when the task was created
      * @param updatedAt date when the task was last updated
+     * @param owner owner id
      */
-    public Task(final String id, final String text, final String status, final String createdAt, final String updatedAt, final String owner) {
+    public Task(final String id, final String text, final String status,
+                final String createdAt, final String updatedAt, final String owner) {
         this.id = id;
         this.text = text;
         this.status = status;
@@ -64,7 +66,7 @@ public class Task {
         return updatedAt;
     }
 
-    public void setUpdatedAt(final String updatedAt) {
+    void setUpdatedAt(final String updatedAt) {
         this.updatedAt = updatedAt;
     }
 
@@ -72,7 +74,7 @@ public class Task {
         return owner;
     }
 
-    public void setOwner(String owner) {
+    public void setOwner(final String owner) {
         this.owner = owner;
     }
 }

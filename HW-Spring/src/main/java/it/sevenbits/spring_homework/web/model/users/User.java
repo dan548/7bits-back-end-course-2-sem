@@ -10,10 +10,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * User model.
+ */
 public class User {
 
     @JsonProperty("id")
-    private final String id;
+    private String id;
 
     @JsonProperty("username")
     private final String username;
@@ -24,21 +27,38 @@ public class User {
     @JsonIgnore
     private final String password;
 
-    public User(String id, String username, String password, List<String> authorities) {
+    /**
+     * Constructs new user.
+     * @param id user id
+     * @param username username
+     * @param password user's password
+     * @param authorities user's current authorities
+     */
+    public User(final String id, final String username, final String password, final List<String> authorities) {
         this.id = id;
         this.username = username;
         this.authorities = authorities;
         this.password = password;
     }
 
+    /**
+     * Constructs new user for JSON generating.
+     * @param id user id
+     * @param username username
+     * @param authorities user's current authorities
+     */
     @JsonCreator
-    public User(String id, String username, List<String> authorities) {
+    public User(final String id, final String username, final List<String> authorities) {
         this.id = id;
         this.username = username;
         this.password = null;
         this.authorities = authorities;
     }
 
+    /**
+     * Gets a user by the current authentication.
+     * @param authentication current authentication
+     */
     public User(final Authentication authentication) {
         Object principal = authentication.getPrincipal();
         if (principal instanceof UserDetails) {
@@ -69,5 +89,9 @@ public class User {
 
     public String getId() {
         return id;
+    }
+
+    public void setId(final String id) {
+        this.id = id;
     }
 }

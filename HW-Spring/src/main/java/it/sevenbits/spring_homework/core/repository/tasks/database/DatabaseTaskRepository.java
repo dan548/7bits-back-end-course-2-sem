@@ -24,6 +24,16 @@ public class DatabaseTaskRepository implements TaskRepository {
     private final JdbcOperations jdbcOperations;
     private final DateGetter dateGetter;
 
+    private String getId(final User user) {
+        String ownerId = user.getId();
+        if (ownerId == null) {
+            ownerId = jdbcOperations.queryForObject("SELECT id FROM users u" +
+                            " WHERE u.enabled = true AND u.username = ?",
+                    (rs, i) -> rs.getString("id"), user.getUsername());
+        }
+        return ownerId;
+    }
+
     /**
      * Constructs a new repository.
      * @param jdbcOperations current jdbc settings
@@ -47,10 +57,11 @@ public class DatabaseTaskRepository implements TaskRepository {
     @Override
     public Task findTaskById(final String givenId) {
         User user = new User(SecurityContextHolder.getContext().getAuthentication());
+        String ownerId = getId(user);
         try {
             return jdbcOperations.queryForObject(
                     "SELECT id, text, status, createdAt, updatedAt, owner FROM task WHERE id = ? AND owner = ?",
-                    DatabaseTaskRepository::mapRow, givenId, user.getId());
+                    DatabaseTaskRepository::mapRow, givenId, ownerId);
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
@@ -60,8 +71,11 @@ public class DatabaseTaskRepository implements TaskRepository {
     public Task create(final AddTaskRequest request) {
         String date = dateGetter.getDate();
         User user = new User(SecurityContextHolder.getContext().getAuthentication());
-        Task newTask = new Task(UUID.randomUUID().toString(), request.getText(), StatusType.INBOX.toString(), date, date, user.getId());
-        jdbcOperations.update("INSERT INTO task (id, text, status, createdAt, updatedAt, owner) VALUES (?, ?, ?, ?, ?, ?)",
+        String ownerId = getId(user);
+        Task newTask = new Task(UUID.randomUUID().toString(), request.getText(), StatusType.INBOX.toString(),
+                date, date, ownerId);
+        jdbcOperations.update("INSERT INTO task (id, text, status, createdAt, updatedAt, owner)" +
+                        " VALUES (?, ?, ?, ?, ?, ?)",
                 newTask.getId(), newTask.getText(), newTask.getStatus(),
                 newTask.getCreatedAt(), newTask.getUpdatedAt(), newTask.getOwner());
 
@@ -80,48 +94,53 @@ public class DatabaseTaskRepository implements TaskRepository {
     @Override
     public List<Task> getAllTasks() {
         User user = new User(SecurityContextHolder.getContext().getAuthentication());
+        String ownerId = getId(user);
         return jdbcOperations.query(
                 "SELECT id, text, status, createdat, updatedat, owner FROM task WHERE owner = ?",
-                DatabaseTaskRepository::mapRow, user.getId());
+                DatabaseTaskRepository::mapRow, ownerId);
     }
 
     @Override
     public int editTaskById(final UpdateTaskRequest request, final String id) {
         String date = dateGetter.getDate();
         User user = new User(SecurityContextHolder.getContext().getAuthentication());
+        String ownerId = getId(user);
         return jdbcOperations.update("UPDATE task SET status = COALESCE(?, status), text = COALESCE(?, text), " +
                         "updatedat = ? WHERE id = ? AND owner = ?", request.getStatus(),
-                request.getText(), date, id, user.getId());
+                request.getText(), date, id, ownerId);
     }
 
     @Override
     public List<Task> getTasksWithStatus(final String status) {
         User user = new User(SecurityContextHolder.getContext().getAuthentication());
+        String ownerId = getId(user);
         return jdbcOperations.query(
                 "SELECT id, text, status, createdat, updatedat, owner FROM task WHERE status=? AND owner = ?",
-                DatabaseTaskRepository::mapRow, status, user.getId());
+                DatabaseTaskRepository::mapRow, status, ownerId);
     }
 
     @Override
     public List<Task> getTaskPage(final String status, final String order, final int page, final int size) {
         User user = new User(SecurityContextHolder.getContext().getAuthentication());
+        String ownerId = getId(user);
         if ("asc".equals(order)) {
             return jdbcOperations.query(
                     "SELECT id, text, status, createdat, updatedat, owner FROM task WHERE status = ? AND owner = ? " +
                             "ORDER BY createdat ASC LIMIT ? OFFSET ?",
-                    DatabaseTaskRepository::mapRow, status, user.getId(), size, (page - 1) * size);
+                    DatabaseTaskRepository::mapRow, status, ownerId, size, (page - 1) * size);
         } else {
             return jdbcOperations.query(
                     "SELECT id, text, status, createdat, updatedat, owner FROM task WHERE status = ? AND owner = ? " +
                             "ORDER BY createdat DESC LIMIT ? OFFSET ?",
-                    DatabaseTaskRepository::mapRow, status, user.getId(), size, (page - 1) * size);
+                    DatabaseTaskRepository::mapRow, status, ownerId, size, (page - 1) * size);
         }
     }
 
     @Override
     public Integer getSize(final String status) {
         User user = new User(SecurityContextHolder.getContext().getAuthentication());
+        String ownerId = getId(user);
         return jdbcOperations.queryForObject("SELECT COUNT(*) FROM task WHERE status=? AND owner = ?",
-                Integer.class, status, user.getId());
+                Integer.class, status, ownerId);
     }
 }

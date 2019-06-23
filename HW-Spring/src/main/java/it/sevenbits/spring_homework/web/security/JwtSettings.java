@@ -17,6 +17,12 @@ public class JwtSettings {
     private String tokenSigningKey;
     private int aTokenDuration;
 
+    /**
+     * Constructs JWT settings
+     * @param tokenIssuer issuer
+     * @param tokenSigningKey signing key
+     * @param aTokenDuration duration
+     */
     public JwtSettings(@Value("${jwt.issuer}") final String tokenIssuer,
                        @Value("${jwt.signingKey}") final String tokenSigningKey,
                        @Value("${jwt.aTokenDuration}") final int aTokenDuration) {
@@ -25,14 +31,26 @@ public class JwtSettings {
         this.aTokenDuration = aTokenDuration;
     }
 
+    /**
+     * Gets issuer
+     * @return token issuer
+     */
     public String getTokenIssuer() {
         return tokenIssuer;
     }
 
+    /**
+     * Gets signing key
+     * @return token signing key
+     */
     public byte[] getTokenSigningKey() {
         return tokenSigningKey.getBytes(StandardCharsets.UTF_8);
     }
 
+    /**
+     * Get expiration date
+     * @return expiration date
+     */
     public Duration getTokenExpiredIn() {
         return Duration.ofMinutes(aTokenDuration);
     }

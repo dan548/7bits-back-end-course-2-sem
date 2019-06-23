@@ -20,16 +20,22 @@ import java.util.Collections;
 /**
  * Abstract filter to take JwtToken from the http request.
  */
-abstract public class JwtAuthFilter extends AbstractAuthenticationProcessingFilter {
+public abstract class JwtAuthFilter extends AbstractAuthenticationProcessingFilter {
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public JwtAuthFilter(RequestMatcher matcher) {
+    /**
+     * Constructs filter
+     * @param matcher matcher to construct authentication processing filter
+     */
+    JwtAuthFilter(final RequestMatcher matcher) {
         super(matcher);
     }
 
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+    public Authentication attemptAuthentication(final HttpServletRequest request,
+                                                final HttpServletResponse response)
+            throws AuthenticationException {
         String token;
         try {
             token = takeToken(request);
@@ -40,6 +46,12 @@ abstract public class JwtAuthFilter extends AbstractAuthenticationProcessingFilt
         return new JwtToken(token);
     }
 
+    /**
+     * Get token from request
+     * @param request servlet request
+     * @return token string
+     * @throws AuthenticationException authentication failed
+     */
     protected abstract String takeToken(HttpServletRequest request) throws AuthenticationException;
 
     private Authentication anonymousToken() {
@@ -49,8 +61,8 @@ abstract public class JwtAuthFilter extends AbstractAuthenticationProcessingFilt
 
     @Override
     protected void successfulAuthentication(
-            HttpServletRequest request, HttpServletResponse response,
-            FilterChain chain, Authentication authResult)
+            final HttpServletRequest request, final HttpServletResponse response,
+            final FilterChain chain, final Authentication authResult)
             throws IOException, ServletException {
         SecurityContextHolder.getContext().setAuthentication(authResult);
         chain.doFilter(request, response);
