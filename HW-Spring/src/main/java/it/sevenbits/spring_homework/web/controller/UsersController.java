@@ -1,6 +1,5 @@
 package it.sevenbits.spring_homework.web.controller;
 
-import it.sevenbits.spring_homework.core.repository.users.UsersRepository;
 import it.sevenbits.spring_homework.web.model.users.UpdateUserRequest;
 import it.sevenbits.spring_homework.web.model.users.User;
 import it.sevenbits.spring_homework.web.model.users.UsersServiceResponse;
@@ -24,23 +23,20 @@ import java.util.Optional;
 @RequestMapping("/users")
 public class UsersController {
 
-    private final UsersRepository usersRepository;
     private final UsersService service;
 
     /**
      * Constructs controller.
-     * @param usersRepository repository
      * @param service service
      */
-    public UsersController(final UsersRepository usersRepository, final UsersService service) {
-        this.usersRepository = usersRepository;
+    public UsersController(final UsersService service) {
         this.service = service;
     }
 
     @GetMapping
     @ResponseBody
     public ResponseEntity<List<User>> getAllUsers() {
-        return ResponseEntity.ok(usersRepository.findAll());
+        return ResponseEntity.ok(service.findAll());
     }
 
     /**
@@ -52,7 +48,7 @@ public class UsersController {
     @ResponseBody
     public ResponseEntity<User> getUserInfo(final @PathVariable("id") String id) {
         return Optional
-                .ofNullable(usersRepository.findById(id))
+                .ofNullable(service.findById(id))
                 .map(user -> ResponseEntity.ok().body(user))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }

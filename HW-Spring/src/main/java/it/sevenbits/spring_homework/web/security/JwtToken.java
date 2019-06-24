@@ -13,7 +13,7 @@ public class JwtToken extends AbstractAuthenticationToken {
      * Constructs unauthenticated token.
      * @param token token string
      */
-    public JwtToken(final String token) {
+    JwtToken(final String token) {
         super(null);
         this.token = token;
         super.setAuthenticated(false);

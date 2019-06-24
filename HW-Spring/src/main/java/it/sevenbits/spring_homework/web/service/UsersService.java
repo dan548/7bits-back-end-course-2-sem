@@ -5,9 +5,12 @@ import it.sevenbits.spring_homework.core.errorcodes.UsersResponseCode;
 import it.sevenbits.spring_homework.core.repository.users.UsersRepository;
 import it.sevenbits.spring_homework.web.model.users.SignUpRequest;
 import it.sevenbits.spring_homework.web.model.users.UpdateUserRequest;
+import it.sevenbits.spring_homework.web.model.users.User;
 import it.sevenbits.spring_homework.web.model.users.UsersServiceResponse;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * User manipulating service.
@@ -66,6 +69,23 @@ public class UsersService {
             }
         }
         return new UsersServiceResponse(UsersResponseCode.INVALID);
+    }
+
+    /**
+     * Gets all users
+     * @return user list
+     */
+    public List<User> findAll() {
+        return repository.findAll();
+    }
+
+    /**
+     * Finds user by id
+     * @param id user id
+     * @return user
+     */
+    public User findById(final String id) {
+        return repository.findById(id);
     }
 
 }

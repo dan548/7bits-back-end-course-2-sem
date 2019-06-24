@@ -35,7 +35,7 @@ public class JwtSettings {
      * Gets issuer
      * @return token issuer
      */
-    public String getTokenIssuer() {
+    String getTokenIssuer() {
         return tokenIssuer;
     }
 
@@ -43,7 +43,7 @@ public class JwtSettings {
      * Gets signing key
      * @return token signing key
      */
-    public byte[] getTokenSigningKey() {
+    byte[] getTokenSigningKey() {
         return tokenSigningKey.getBytes(StandardCharsets.UTF_8);
     }
 
@@ -51,7 +51,7 @@ public class JwtSettings {
      * Get expiration date
      * @return expiration date
      */
-    public Duration getTokenExpiredIn() {
+    Duration getTokenExpiredIn() {
         return Duration.ofMinutes(aTokenDuration);
     }
 

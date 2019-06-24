@@ -1,4 +1,4 @@
-package it.sevenbits.spring_homework.web.service.taskservice;
+package it.sevenbits.spring_homework.web.service;
 
 import it.sevenbits.spring_homework.config.constant.StatusType;
 import it.sevenbits.spring_homework.core.errorcodes.TaskResponseErrorCode;

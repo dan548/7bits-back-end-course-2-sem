@@ -54,10 +54,6 @@ public class Task {
         this.status = status;
     }
 
-    public void setText(final String text) {
-        this.text = text;
-    }
-
     public String getCreatedAt() {
         return createdAt;
     }
@@ -72,9 +68,5 @@ public class Task {
 
     public String getOwner() {
         return owner;
-    }
-
-    public void setOwner(final String owner) {
-        this.owner = owner;
     }
 }

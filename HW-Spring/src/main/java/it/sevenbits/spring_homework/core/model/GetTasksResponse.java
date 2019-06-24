@@ -29,10 +29,6 @@ public class GetTasksResponse {
         return meta;
     }
 
-    public void setMeta(final TasksPaginationMeta meta) {
-        this.meta = meta;
-    }
-
     public List<Task> getTasks() {
         return tasks;
     }
