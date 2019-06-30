@@ -113,7 +113,7 @@ public class TaskListController {
      */
     @RequestMapping(value = "/{id}", method = DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Task> deleteTask(final @PathVariable("id") String id) {
+    public ResponseEntity deleteTask(final @PathVariable("id") String id) {
         if (id.matches(Regexps.UUID)) {
             Task response = service.removeTaskById(id);
             if (response != null) {
@@ -133,7 +133,7 @@ public class TaskListController {
     @RequestMapping(value = "/{id}", method = PATCH,
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Task> updateTask(final @PathVariable("id") String id, final @RequestBody UpdateTaskRequest request) {
+    public ResponseEntity updateTask(final @PathVariable("id") String id, final @RequestBody UpdateTaskRequest request) {
         if (id.matches(Regexps.UUID)) {
             TaskResponse response = service.editTaskById(request, id);
             if (response.getCode() == null) {

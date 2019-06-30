@@ -62,8 +62,9 @@ public class UsersService {
         !request.getUsername().equals("") && !request.getPassword().equals("")) {
             if (!repository.checkUsername(request.getUsername())) {
                 String password = passwordEncoder.encode(request.getPassword());
-                repository.addUser(new SignUpRequest(request.getUsername(), password));
-                return new UsersServiceResponse(UsersResponseCode.SUCCESS);
+                if (repository.addUser(new SignUpRequest(request.getUsername(), password)) > 0) {
+                    return new UsersServiceResponse(UsersResponseCode.SUCCESS);
+                }
             } else {
                 return new UsersServiceResponse(UsersResponseCode.EXISTS);
             }

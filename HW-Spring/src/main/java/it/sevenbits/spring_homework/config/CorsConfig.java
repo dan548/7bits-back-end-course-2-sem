@@ -20,7 +20,7 @@ public class CorsConfig {
     @Value("${corsHeaders.allowCredentials:true}")
     private boolean allowCredentials = true;
 
-    @Value("${corsHeaders.allowMethods:GET,POST,OPTIONS}")
+    @Value("${corsHeaders.allowMethods:GET,POST,OPTIONS,DELETE,PATCH}")
     private String allowMethods;
 
     @Value("${corsHeaders.allowHeaders:Authorization,Origin,Accept,Key,DNT,Keep-Alive," +

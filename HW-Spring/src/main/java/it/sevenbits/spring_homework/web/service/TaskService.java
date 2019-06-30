@@ -55,7 +55,7 @@ public class TaskService {
         Integer fullSize = taskRepository.getSize(status);
         if (fullSize != null) {
             int pages = (int) Math.ceil((double) fullSize / size);
-            if (page > pages) {
+            if (page > pages && pages != 0) {
                 return null;
             }
             String next, prev, first, last;

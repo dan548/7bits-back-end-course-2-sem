@@ -2,6 +2,7 @@ package it.sevenbits.spring_homework.core.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,6 +24,14 @@ public class GetTasksResponse {
     public GetTasksResponse(final TasksPaginationMeta meta, @JsonProperty final List<Task> tasks) {
         this.meta = meta;
         this.tasks = tasks;
+    }
+
+    /**
+     * Constructor for bad request
+     */
+    public GetTasksResponse() {
+        this.meta = null;
+        this.tasks = new ArrayList<>();
     }
 
     public TasksPaginationMeta getMeta() {

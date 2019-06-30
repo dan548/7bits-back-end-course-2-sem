@@ -31,10 +31,9 @@ public class DatabaseUsersRepository implements UsersRepository {
     @Override
     public boolean checkUsername(final String username) {
         try {
-            jdbcOperations.queryForMap(
-                    "SELECT id FROM users u" +
-                            " WHERE u.username = ?",
-                    username
+            String id = jdbcOperations.queryForObject(
+                    "SELECT id FROM users u WHERE u.username = ?",
+                    String.class, username
             );
             return true;
         } catch (IncorrectResultSizeDataAccessException e) {
