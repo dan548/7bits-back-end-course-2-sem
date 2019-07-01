@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <springProperty scope="context" name="APP_NAME" source="application.name" defaultValue="app"/>
+    <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}spring.log}"/>
+    <property name="FILE_LOG_PATTERN" value="%thread %-5level %logger{36} %msg\n%n"/>
+
+    <appender name="ROLLING-FILE"
+    class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <file>${LOG_PATH}/${LOG_FILE}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/${APP_NAME}}.%d{yyyy-MM-dd_HH}.%i.gz</fileNamePattern>
+            <maxHistory>24</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy
+            class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>20MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+
+    <springProfile name="console-and-file-logging">
+        <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="ROLLING-FILE"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="file-only-logging">
+        <root level="WARN">
+            <appender-ref ref="ROLLING-FILE"/>
+        </root>
+    </springProfile>
+</configuration>
