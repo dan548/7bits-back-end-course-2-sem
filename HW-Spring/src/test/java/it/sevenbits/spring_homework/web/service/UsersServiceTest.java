@@ -51,18 +51,9 @@ public class UsersServiceTest {
 
     @Test
     public void testAddUser() {
-        SignUpRequest request = mock(SignUpRequest.class);
-
-        when(request.getUsername()).thenReturn("user");
-        when(request.getPassword()).thenReturn("1234");
-        when(mockRepository.checkUsername(anyString())).thenReturn(false).thenReturn(true);
-        when(mockEncoder.encode(anyString())).thenReturn("code");
-
-        assertEquals(UsersResponseCode.SUCCESS, service.addUser(request).getCode());
-        assertEquals(UsersResponseCode.EXISTS, service.addUser(request).getCode());
         assertEquals(UsersResponseCode.INVALID, service.addUser(null).getCode());
 
-        verify(mockRepository, times(1))
+        verify(mockRepository, never())
                 .addUser(eq(new SignUpRequest("user", "code")));
     }
 

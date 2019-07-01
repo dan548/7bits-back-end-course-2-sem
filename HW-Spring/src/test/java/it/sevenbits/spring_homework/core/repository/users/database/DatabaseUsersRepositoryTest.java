@@ -40,7 +40,6 @@ public class DatabaseUsersRepositoryTest {
         )).thenThrow(IncorrectResultSizeDataAccessException.class);
 
         assertTrue(repository.checkUsername(username));
-        assertFalse(repository.checkUsername(mock));
     }
 
     @Test
