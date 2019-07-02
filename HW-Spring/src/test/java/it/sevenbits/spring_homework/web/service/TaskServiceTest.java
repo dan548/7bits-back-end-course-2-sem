@@ -139,17 +139,17 @@ public class TaskServiceTest {
 
         TaskResponse result = service.editTaskById(request, taskId);
         verify(mockRepository, times(0)).editTaskById(request, taskId);
-        assertEquals(TaskResponseErrorCode.BAD_STATUS, result.getCode());
+        assertEquals(TaskResponseErrorCode.BAD_REQUEST, result.getCode());
     }
 
     @Test
-    public void testEditTaskByIdBadRequest() {
+    public void testEditTaskByIdGoodNullRequest() {
         String taskId = "a55256a8-1245-4c2c-82da-a7846365079d";
         UpdateTaskRequest request = mock(UpdateTaskRequest.class);
 
         TaskResponse result = service.editTaskById(request, taskId);
-        verify(mockRepository, times(0)).editTaskById(request, taskId);
-        assertEquals(TaskResponseErrorCode.BAD_REQUEST, result.getCode());
+        verify(mockRepository, times(1)).editTaskById(request, taskId);
+        assertEquals(TaskResponseErrorCode.NOT_FOUND, result.getCode());
     }
 
     @Test

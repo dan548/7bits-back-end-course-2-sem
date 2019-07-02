@@ -1,5 +1,9 @@
 package it.sevenbits.spring_homework.config.constant;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.stream.Collectors;
+
 /**
  * Enum of the status types.
  */
@@ -19,6 +23,12 @@ public enum StatusType {
     }
 
     private String type;
+
+    public static HashSet<String> getEnums() {
+        return Arrays.stream(values())
+                .map(x -> x.type)
+                .collect(Collectors.toCollection(HashSet::new));
+    }
 
     @Override
     public String toString() {

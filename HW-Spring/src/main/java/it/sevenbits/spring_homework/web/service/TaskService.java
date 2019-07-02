@@ -136,26 +136,17 @@ public class TaskService {
      */
     public TaskResponse editTaskById(final UpdateTaskRequest request, final String id) {
         if (id.matches(Regexps.UUID)) {
-            if (request.getStatus() != null) {
-                if (request.getStatus().equals(StatusType.INBOX.toString()) || request.getStatus().equals(StatusType.DONE.toString())) {
-                    int changed = taskRepository.editTaskById(request, id);
-                    if (changed != 0) {
-                        return new TaskResponse();
-                    }
-                    return new TaskResponse(TaskResponseErrorCode.NOT_FOUND);
-                } else {
-                    return new TaskResponse(TaskResponseErrorCode.BAD_STATUS);
+            if (request != null && !"".equals(request.getText())
+                    && (request.getStatus() == null
+                        || StatusType.getEnums().contains(request.getStatus()))
+            ) {
+                int changed = taskRepository.editTaskById(request, id);
+                if (changed != 0) {
+                    return new TaskResponse();
                 }
+                return new TaskResponse(TaskResponseErrorCode.NOT_FOUND);
             } else {
-                if (request.getText() == null || request.getText().equals("")) {
-                    return new TaskResponse(TaskResponseErrorCode.BAD_REQUEST);
-                } else {
-                    int changed = taskRepository.editTaskById(request, id);
-                    if (changed != 0) {
-                        return new TaskResponse();
-                    }
-                    return new TaskResponse(TaskResponseErrorCode.NOT_FOUND);
-                }
+                return new TaskResponse(TaskResponseErrorCode.BAD_REQUEST);
             }
         }
         return new TaskResponse(TaskResponseErrorCode.NOT_FOUND);
