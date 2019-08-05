@@ -1,7 +1,7 @@
 application:
   name: 'Task manager'
 server:
-  port: 8080
+  port: 8088
 jwt:
   issuer: 'danfromomsk@gmail.com'
   signingKey: '251853hero'
@@ -21,9 +21,10 @@ parameters:
 utils:
   date-pattern: yyyy-MM-dd'T'HH:mm:ssxxx
 logging:
+  config: "classpath:logback-spring.xml"
   file:
     max-size: 512K
-  path: logs
+  path: /var/logs/mytasks
   level:
     root: INFO
     org.springframework.web: INFO

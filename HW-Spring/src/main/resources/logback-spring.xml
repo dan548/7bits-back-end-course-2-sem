@@ -2,8 +2,8 @@
 <configuration>
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
     <springProperty scope="context" name="APP_NAME" source="application.name" defaultValue="app"/>
-    <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}spring.log}"/>
     <property name="FILE_LOG_PATTERN" value="%thread %-5level %logger{36} %msg\n%n"/>
+    <property name="LOG_FILE" value="my_log.log"/>
 
     <appender name="ROLLING-FILE"
     class="ch.qos.logback.core.rolling.RollingFileAppender">

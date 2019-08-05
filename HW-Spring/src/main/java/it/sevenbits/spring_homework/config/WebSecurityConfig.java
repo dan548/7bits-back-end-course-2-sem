@@ -52,10 +52,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement().disable();
         http.requestCache().disable();
         http.anonymous();
-
+        http.cors();
+        
         RequestMatcher signUpPageMatcher = new AntPathRequestMatcher("/signup");
         RequestMatcher notSignUpPageMatcher = new NegatedRequestMatcher(signUpPageMatcher);
-
         JwtAuthFilter authFilter = new HeaderJwtAuthFilter(notSignUpPageMatcher);
         http.addFilterBefore(authFilter, FilterSecurityInterceptor.class);
 
@@ -73,6 +73,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(final AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(new JwtAuthenticationProvider(jwtTokenService));
     }
+
 
     @Override
     public void configure(final WebSecurity web) throws Exception {

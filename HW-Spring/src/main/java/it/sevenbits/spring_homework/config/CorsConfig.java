@@ -27,6 +27,9 @@ public class CorsConfig {
             "User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type}")
     private String allowHeaders;
 
+    @Value("${corsHeaders.exposedHeaders:Location}")
+    private String exposedHeaders;
+
     private Pattern delimiter = Pattern.compile("[,\\s]+");
 
     /**
@@ -42,7 +45,8 @@ public class CorsConfig {
                         .allowedOrigins(delimiter.split(allowOrigins))
                         .allowCredentials(allowCredentials)
                         .allowedMethods(delimiter.split(allowMethods))
-                        .allowedHeaders(delimiter.split(allowHeaders));
+                        .allowedHeaders(delimiter.split(allowHeaders))
+                        .exposedHeaders(delimiter.split(exposedHeaders));
             }
         };
     }
